@@ -126,7 +126,7 @@ async function updateSequenceScript(context){
 
 async function createSequenceScript(context){
   const toCreate = (context.data.sequences).filter(seq =>{
-    return context.result.script_sequences.every(s=> s.sequenceId !== seq.sequenceId)
+    return (context.result.script_sequences||[]).every(s=> s.sequenceId !== seq.sequenceId)
   });
 
 
