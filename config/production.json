@@ -1,5 +1,9 @@
 {
   "host": "feathers-basics-app.feathersjs.com",
   "port": "PORT",
-  "mysql": "CLEARDB_DATABASE_URL"
+  "mysql": "CLEARDB_DATABASE_URL",
+  "paginate": {
+    "default": 100,
+    "max": 100
+  }
 }
