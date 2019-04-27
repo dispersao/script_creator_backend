@@ -1,0 +1,5 @@
+{
+  "host": "feathers-basics-app.feathersjs.com",
+  "port": "PORT",
+  "mysql": "CLEARDB_DATABASE_URL"
+}
