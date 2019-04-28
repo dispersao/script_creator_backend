@@ -28,7 +28,8 @@
     "dev": "nodemon src/",
     "start": "node src/",
     "startDev": "node --inspect src/",
-    "jest": "jest"
+    "jest": "jest",
+    "heroku-postbuild": "cd react-ui && npm install && npm run build"
   },
   "dependencies": {
     "@feathersjs/configuration": "^2.0.6",
