@@ -1,0 +1,161 @@
+.App {
+  /* text-align: center; */
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.FiltersContainer {
+  padding: 0 5px;
+  background: #adadad;
+  /* min-height: 100%; */
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.FilterContainer {
+  /* padding-bottom: 15px; */
+  flex: 1;
+  padding: 5px;
+  width: 100%;
+}
+
+.FilterTitle {
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.Submit {
+  margin: 5px 0;
+}
+
+.SequenceTitle {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.SequenceContainer {
+  padding: 0 30px;
+}
+
+.partContainer {
+  margin-bottom: 20px;
+  clear: both;
+}
+
+.light {
+  color: #cfcfcf;
+}
+
+.m5 {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  float: left;
+}
+
+.charactersList {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.reduced .SequenceContainer {
+  background: #efefef;
+  padding: 20px;
+  display: block;
+  height: 400px;
+  overflow: auto;
+  float: left;
+}
+
+.sequencePicker .reduced .SequenceContainer {
+  max-height: 300px;
+}
+
+.scriptEditorSequencesContainer {
+  display: flex;
+}
+
+.sequencePicker {
+  flex: 1;
+  min-width: 200px;
+}
+
+.scriptContainer {
+  flex: 2;
+  min-width: 400px;
+  padding: 5px;
+  margin-top: -10px;
+}
+
+.scriptView {
+  max-width: 800px;
+  margin: auto;
+}
+
+.Screenplay {
+  display: flex;
+  flex-direction: column;
+}
+
+.ScriptHeaderView {
+  padding: 1rem 2rem;
+}
+
+.ScriptName {
+  width: 100%;
+}
+
+.droparea {
+  width: 100%;
+  height: 5px;
+}
+
+.droparea.over {
+  height: 400px;
+  background-color: #efefef;
+  opacity: 0.5;
+}
+
+.deleteSequence {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.dragContainer {
+  margin: 5px 0 0 0;
+}
+
+.sequenceWrapper {
+  position: relative;
+}
