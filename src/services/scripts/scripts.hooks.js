@@ -80,8 +80,7 @@ module.exports = {
   }
 };
 
-
-async function formatScriptResponse(context, script) {
+function formatScriptResponse(context, script) {
   const {id, name, author, last_editor} = script;
 
   return {
