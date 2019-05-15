@@ -1,5 +1,6 @@
 import { normalizeScriptData} from '../schema'
 import {getScripts} from '../selectors'
+import {scriptsService} from '../utils/feathers-app'
 
 export const REQUEST_SCRIPTS = 'REQUEST_SCRIPTS'
 export const RECEIVE_SCRIPTS = 'RECEIVE_SCRIPTS'
@@ -64,15 +65,9 @@ const shouldFetchScripts = (state) => {
 
 const fetchScripts = () => dispatch => {
   dispatch(requestScripts())
-  return fetch(`/scripts`, {
-    headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }})
-  .then(res => res.json())
-  .then(json => {
-    console.log(normalizeScriptData(json.data))
-    return dispatch(receiveScripts(normalizeScriptData(json.data)))
+  return scriptsService.find()
+  .then(scripts => {
+    return dispatch(receiveScripts(normalizeScriptData(scripts.data)))
   })
 }
 

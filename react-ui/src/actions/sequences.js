@@ -1,5 +1,7 @@
 import {normalizeSequencesData} from '../schema'
 import {getSequences} from '../selectors'
+import {sequenceSservice} from '../utils/feathers-app'
+
 
 export const SET_FILTER_IDS = 'SET_FILTER_IDS'
 export const SET_FILTER_EXCLUDE = 'SET_FILTER_EXCLUDE'
@@ -48,12 +50,7 @@ export const receiveSequences = (data) => {
 
 const fetchSequences = () => dispatch => {
   dispatch(requestSequences())
-  return fetch(`/sequences`, {
-    headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }})
-  .then(res => res.json())
+  return sequenceSservice.find()
   .then(json => {
     return dispatch(receiveSequences(normalizeSequencesData(json.data)))
   })

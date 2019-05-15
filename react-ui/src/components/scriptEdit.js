@@ -24,7 +24,7 @@ class ScriptView extends Component {
     return (
       <div className="scriptView">
         <Nav>
-          <Link to="/">Home</Link>
+          <Link to="/scripts">Home</Link>
         </Nav>
         {this.props.script &&
           <div>

@@ -21,6 +21,8 @@ const reducer = (state = initialScriptState, action) => {
       return state.set( 'loading', true)
     case RECEIVE_SCRIPTS:
       let newState = state.set('loading', false)
+      debugger
+
       return newState.mergeDeep(fromJS(action.payload.entities))
     case ADD_SEQUENCE_TO_SCRIPT:
       return includeNewSequenceToScript(state, action.payload)
@@ -34,15 +36,18 @@ const reducer = (state = initialScriptState, action) => {
 }
 
 function includeNewSequenceToScript (state, {index, sequence, script}) {
+  state = state.set('synched', false)
   const newSeqList = state.getIn(['scripts', script.toString(), 'sequences']).insert(index,sequence)
   return state.setIn(['scripts', script.toString(), 'sequences'], newSeqList)
 }
 
 function removeSequenceFromScript(state, {index, script}) {
+  state = state.set('synched', false)
   return state.removeIn(['scripts', script.toString(), 'sequences', index])
 }
 
 function setScriptData(state, {script, field, value}){
+  state = state.set('synched', false)
   return state.setIn(['scripts', script.toString(), field], value)
 }
 

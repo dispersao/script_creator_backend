@@ -7,7 +7,9 @@ const ScriptHeader = ({name, author, id }) => {
   return (
     <Jumbotron className="ScriptHeaderView">
       <ScriptName name={name} id={id}  />
-      <ScriptAuthor author={author} id={id} />
+      <div>
+        by {author}
+      </div>
     </Jumbotron>
   )
 }

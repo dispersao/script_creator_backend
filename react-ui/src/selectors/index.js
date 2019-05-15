@@ -17,6 +17,8 @@ const getSequenceFilters = state => state.sequenceFilters;
 const getEntryListByname = (state, name) => state.sequenceData.get(name)
 const getSequenceFilterByName = (state, name) => state.sequenceFilters.get(name)
 
+const getLogedUser = (state) => state.user
+
 const getSequenceCharacters = (sequence, parts) => {
   let chars = sequence.get('parts').map(pid => parts.get(pid.toString()).get('characters'))
   chars = chars.flatMap(c => c.valueSeq().toArray())
@@ -87,6 +89,7 @@ const getCurrentScriptFormatted = createSelector(
         name: script.get('name'),
         id: script.get('id'),
         author: script.get('author'),
+        last_editor: script.get('last_editor'),
         // sequences: script.get('scriptSequences').map((scriptSeqId, index) => {
         sequences: script.get('sequences').map((seqId, index) => {
           // const scriptSeq = scriptSequences.get(scriptSeqId.toString())
@@ -131,4 +134,4 @@ const filterField =  (filter, field) => {
   return shouldInclude
 }
 
-export { getCharacters, getLocations, getParts, getFilteredSequences, getSequenceFilterByName, getEntryListByname, getScripts , getSequences, getCurrentScriptId, getCurrentScriptFormatted};
+export { getLogedUser, getCharacters, getLocations, getParts, getFilteredSequences, getSequenceFilterByName, getEntryListByname, getScripts , getSequences, getCurrentScriptId, getCurrentScriptFormatted};
