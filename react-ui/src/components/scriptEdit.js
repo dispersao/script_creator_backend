@@ -7,7 +7,7 @@ import ScriptHeader from './scriptHeader'
 import ScriptEditSequenceList from './scriptEditSequenceList'
 import {connect} from 'react-redux'
 import {toJS} from '../utils/immutableToJS'
-import {fetchScriptsIfNeeded, fetchSequencesifNeeded, setCurrentScriptId, setCurrentScriptEditing} from '../actions'
+import {fetchScriptsIfNeeded, fetchSequencesifNeeded, setCurrentScriptId} from '../actions'
 import {getCurrentScriptFormatted, getScriptsLoading} from '../selectors'
 import {Link} from 'react-router-dom'
 import {Nav} from 'react-bootstrap'
@@ -19,7 +19,6 @@ class ScriptEdit extends Component {
     this.props.fetchScripts()
     this.props.fetchSequences()
     this.props.setScript()
-    this.props.setCurrentScriptEditing()
   }
   render(){
     return (
@@ -63,7 +62,6 @@ const mapDispatchToProps = (dispatch, props) => ({
   fetchScripts: ()=>dispatch(fetchScriptsIfNeeded()),
   fetchSequences: ()=>dispatch(fetchSequencesifNeeded()),
   setScript: ()=>dispatch(setCurrentScriptId(props.match.params.id)),
-  setCurrentScriptEditing: ()=>dispatch(setCurrentScriptEditing(props.match.params.id)),
 })
 
 export default DragDropContext(HTML5Backend)(connect(

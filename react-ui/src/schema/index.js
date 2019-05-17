@@ -1,4 +1,8 @@
 import {normalizeSequencesData} from './sequence'
-import {normalizeScriptData} from './script'
+import {normalizeScriptList, normalizeScript} from './script'
 
-export { normalizeSequencesData, normalizeScriptData };
+export {
+  normalizeSequencesData,
+  normalizeScriptList,
+  normalizeScript
+ };
