@@ -1,16 +1,26 @@
 import React from 'react'
 import {Jumbotron} from 'react-bootstrap'
 import ScriptName from './scriptName'
-import SaveCancelScript from './saveCancelScript'
+import {Link} from 'react-router-dom'
+import {Nav} from 'react-bootstrap'
 
 const ScriptHeader = (script) => {
+  console.log("ScriptHeader",script);
   return (
     <Jumbotron className="ScriptHeaderView">
       <ScriptName name={script.name} id={script.id}  />
       <div>
         by {script.author}
       </div>
-      <SaveCancelScript script={script} />
+      <Nav className="right-aligned">
+        {script.edit &&
+          <Link to={`/scripts/${script.id}`}>View</Link>
+        }
+        {!script.edit &&
+          <Link to={`/scripts/${script.id}/edit`}>Edit</Link>
+        }
+
+      </Nav>
     </Jumbotron>
   )
 }

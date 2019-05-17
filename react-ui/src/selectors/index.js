@@ -18,6 +18,7 @@ const getEntryListByname = (state, name) => state.sequenceData.get(name)
 const getSequenceFilterByName = (state, name) => state.sequenceFilters.get(name)
 
 const getLogedUser = (state) => state.user
+const getScriptsLoading = (state) => state.scriptData.get('loading')
 
 const getSequenceCharacters = (sequence, parts) => {
   let chars = sequence.get('parts').map(pid => parts.get(pid.toString()).get('characters'))
@@ -148,5 +149,6 @@ export {
   getScripts,
   getSequences,
   getCurrentScriptId,
-  getCurrentScriptFormatted
+  getCurrentScriptFormatted,
+  getScriptsLoading
 };

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import { DragDropContext } from 'react-dnd'
+import Spinner from 'react-bootstrap/Spinner'
 import HTML5Backend from 'react-dnd-html5-backend'
 import FullSequencesList from './fullSequencesList'
 import ScriptHeader from './scriptHeader'
@@ -7,7 +8,7 @@ import ScriptEditSequenceList from './scriptEditSequenceList'
 import {connect} from 'react-redux'
 import {toJS} from '../utils/immutableToJS'
 import {fetchScriptsIfNeeded, fetchSequencesifNeeded, setCurrentScriptId, setCurrentScriptEditing} from '../actions'
-import {getCurrentScriptFormatted} from '../selectors'
+import {getCurrentScriptFormatted, getScriptsLoading} from '../selectors'
 import {Link} from 'react-router-dom'
 import {Nav} from 'react-bootstrap'
 
@@ -26,9 +27,14 @@ class ScriptEdit extends Component {
         <Nav>
           <Link to="/scripts">Home</Link>
         </Nav>
-        {this.props.script &&
+        {this.props.loading &&
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
+        }
+        {this.props.script && !this.props.loading &&
           <div>
-            <ScriptHeader {...this.props.script} />
+            <ScriptHeader {...this.props.script} edit={true} />
             <div className="scriptEditorSequencesContainer">
               <section className="sequencePicker">
                 <FullSequencesList />
@@ -48,7 +54,8 @@ class ScriptEdit extends Component {
 
 const mapStateToProps= (state,props) => {
   return {
-    script: getCurrentScriptFormatted(state)
+    script: getCurrentScriptFormatted(state),
+    loading: getScriptsLoading(state)
   }
 }
 

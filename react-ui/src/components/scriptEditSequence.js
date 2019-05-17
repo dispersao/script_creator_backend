@@ -3,7 +3,7 @@ import Sequence from './sequence'
 import {connect} from 'react-redux'
 import {getCurrentScriptId} from '../selectors'
 import {toJS} from '../utils/immutableToJS'
-import {removeSequenceFromScriptAt} from '../actions'
+import {removeSequenceFromScript} from '../actions'
 
 
 const ScriptEditSequence = ({sequence, deleteSequence, index, script}) => {
@@ -21,7 +21,7 @@ const mapStateToProps = (state, props) => ({
 })
 
 const mapDispatchToProps = (dispatch, props) =>({
-  deleteSequence: (script, index) => dispatch(removeSequenceFromScriptAt(script, index))
+  deleteSequence: (script, index) => dispatch(removeSequenceFromScript(script, index))
 })
 
 export default connect(

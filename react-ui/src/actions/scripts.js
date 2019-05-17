@@ -6,7 +6,7 @@ import {scriptToStore} from '../utils/formatToApi'
 export const REQUEST_SCRIPTS = 'REQUEST_SCRIPTS'
 export const RECEIVE_SCRIPTS = 'RECEIVE_SCRIPTS'
 export const REQUEST_SCRIPT = 'REQUEST_SCRIPT'
-export const RECEIVE_SCRIPT = 'REQUEST_SCRIPT'
+export const RECEIVE_SCRIPT = 'RECEIVE_SCRIPT'
 export const SET_CURRENT_SCRIPT = 'SET_CURRENT_SCRIPT'
 export const SET_CURRENT_EDITING_SCRIPT = 'SET_CURRENT_EDITING_SCRIPT'
 export const ADD_SEQUENCE_TO_SCRIPT = 'ADD_SEQUENCE_TO_SCRIPT'
@@ -97,6 +97,31 @@ export const scriptCreated = (oldId, script) => ({
   }
 })
 
+export const addSequenceToScript = (script, sequence, index) => (dispatch, getState) => {
+  const list = getState().scriptData.getIn(['scripts', script.toString(), 'sequences']).insert(index,sequence)
+  scriptsService.patch(script, {sequences:list.toJS()})
+  .then(script => {
+    return dispatch(receiveScript(normalizeScriptData([script])))
+  })
+}
+
+export const removeSequenceFromScript = (script, index) => (dispatch, getState) => {
+  dispatch(requestScript())
+  const list = getState().scriptData.getIn(['scripts', script.toString(), 'sequences']).delete(index)
+  scriptsService.patch(script, {sequences: list.toJS()})
+  .then(script => {
+    return dispatch(receiveScript(normalizeScriptData([script])))
+  })
+}
+
+export const changeScriptName = (script, name) => (dispatch, getState) => {
+  dispatch(requestScript())
+  scriptsService.patch(script, {name: name})
+  .then(script => {
+    return dispatch(receiveScript(normalizeScriptData([script])))
+  })
+}
+
 export const fetchScript = (script) => dispatch => {
   dispatch(requestScript(script.id))
   return scriptsService.get(script.id)
@@ -165,13 +190,10 @@ export const refetchScriptIfNeeded = (script) => (dispatch, getState) => {
   }
 }
 
-export const changeScriptName = (script, name) => (dispatch, getState) =>{
-  dispatch(changeScriptData(script, 'name', name))
-}
+// export const changeScriptName = (script, name) => (dispatch, getState) =>{
+//   dispatch(changeScriptData(script, 'name', name))
+// }
 
-export const changeScriptAuthor = (script, name) => (dispatch, getState) =>{
-  dispatch(changeScriptData(script, 'author', name))
-}
 
 export const setCurrentScriptId = id => (dispatch,getState)=>{
   if(id){
