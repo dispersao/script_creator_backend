@@ -7,7 +7,6 @@ import { normalize } from 'normalizr'
 // });
 
 const scriptSchema = new schema.Entity('scripts', {
-  synched: false
   // scriptSequences: [scriptSequenceSchema]
 });
 

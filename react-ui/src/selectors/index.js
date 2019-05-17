@@ -90,6 +90,8 @@ const getCurrentScriptFormatted = createSelector(
         id: script.get('id'),
         author: script.get('author'),
         last_editor: script.get('last_editor'),
+        synched: script.get('synched'),
+        new: script.get('new'),
         // sequences: script.get('scriptSequences').map((scriptSeqId, index) => {
         sequences: script.get('sequences').map((seqId, index) => {
           // const scriptSeq = scriptSequences.get(scriptSeqId.toString())
@@ -100,6 +102,7 @@ const getCurrentScriptFormatted = createSelector(
       })
     }
   )
+
 // }
 
 const mountSequence = (sequence, types, locations, parts, characters) => {
@@ -134,4 +137,16 @@ const filterField =  (filter, field) => {
   return shouldInclude
 }
 
-export { getLogedUser, getCharacters, getLocations, getParts, getFilteredSequences, getSequenceFilterByName, getEntryListByname, getScripts , getSequences, getCurrentScriptId, getCurrentScriptFormatted};
+export {
+  getLogedUser,
+  getCharacters,
+  getLocations,
+  getParts,
+  getFilteredSequences,
+  getSequenceFilterByName,
+  getEntryListByname,
+  getScripts,
+  getSequences,
+  getCurrentScriptId,
+  getCurrentScriptFormatted
+};

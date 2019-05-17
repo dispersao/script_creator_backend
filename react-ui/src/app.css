@@ -159,3 +159,7 @@
 .sequenceWrapper {
   position: relative;
 }
+
+.right-aligned {
+  flex-direction: row-reverse;
+}

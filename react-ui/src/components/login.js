@@ -1,11 +1,10 @@
-import React, {useRef, useState} from 'react'
+import React, {useRef, useEffect} from 'react'
+import Spinner from 'react-bootstrap/Spinner'
 import {toJS} from '../utils/immutableToJS'
 import {connect} from 'react-redux'
 import {authenticateIfNeeded} from '../actions'
 import {getLogedUser} from '../selectors'
 import { Redirect } from 'react-router-dom'
-
-
 
 import {Button, Form} from 'react-bootstrap'
 
@@ -13,15 +12,31 @@ const LoginComp = ({authenticate, user, location}) => {
   const emailEl = useRef(null);
   const passEl = useRef(null);
 
+  useEffect(() => {
+    if(!user.authenticated && !user.loading && !user.authentication_error){
+      authenticate();
+    }
+  });
+
   const onSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    authenticate(emailEl.current.value, passEl.current.value)
+    authenticate({
+      email: emailEl.current.value,
+      password: passEl.current.value
+    });
   };
+
   if(user.authenticated){
     let {from} = location.state && location.state.from.pathname !== '/login' ? location.state : { from: { pathname: "/scripts" }};
     return <Redirect to={from} />
-  } else{
+  } else if (user.loading){
+    return(
+      <Spinner animation="border" role="status">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+    )
+  } else {
     return (
       <div>
       <Form onSubmit={onSubmit}>
@@ -46,17 +61,15 @@ const LoginComp = ({authenticate, user, location}) => {
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  authenticate: (email, password)=> {
-    dispatch(authenticateIfNeeded({
-      email,
-      password
-    }))
+  authenticate: (userdata)=> {
+    dispatch(authenticateIfNeeded())
   }
 })
 
-const mapStateToProps = (state, props) => ({
-  user: getLogedUser(state)
-})
+const mapStateToProps = (state, props) => {
+  console.log(state)
+  return {user: getLogedUser(state)}
+}
 
 export default connect(
   mapStateToProps,

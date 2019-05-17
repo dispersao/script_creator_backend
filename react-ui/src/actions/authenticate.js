@@ -2,6 +2,7 @@ import {authenticate} from '../utils/feathers-app';
 
 export const AUTHENTICATE = 'AUTHENTICATE'
 export const RECEIVE_USER = 'RECEIVE_USER'
+export const AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR'
 
 
 export const requestAuthentication = () => ({
@@ -15,6 +16,13 @@ export const receiveUser = (data) => {
   })
 }
 
+export const authenticationError = (error) => {
+  return ({
+    type: AUTHENTICATION_ERROR,
+    payload: error
+  })
+}
+
 const shouldAuthenticate = (state) => {
   if(false){
     return false;
@@ -22,15 +30,14 @@ const shouldAuthenticate = (state) => {
   return true;
 }
 
-const fetchToken = ({email, password}) => dispatch => {
+const fetchToken = (userData) => dispatch => {
   dispatch(requestAuthentication())
-  return authenticate({
-    email,
-    password,
-    strategy: 'local'
-  })
+  return authenticate(userData)
   .then(user => {
     return dispatch(receiveUser(user))
+  })
+  .catch(error => {
+    return dispatch(authenticationError(error))
   })
 }
 

@@ -14,11 +14,15 @@ app.configure(Authentication({storage: localStorage}));
 // Connect to the `http://feathers-api.com/messages` service
 const scriptsService = app.service('scripts');
 const sequenceSservice = app.service('sequences');
-const authentication = app.authenticate;
 const passportValidation = app.passport.verifyJWT;
 const getUser = () => app.get('user')
 
-const authenticate = (data) => {
+const authenticate = (userData) => {
+
+  const data = userData ? {
+    ...userData,
+    strategy: 'local'
+  } : undefined
 
   return app.authenticate(data)
   .then(response => {

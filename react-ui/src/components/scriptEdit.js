@@ -6,19 +6,19 @@ import ScriptHeader from './scriptHeader'
 import ScriptEditSequenceList from './scriptEditSequenceList'
 import {connect} from 'react-redux'
 import {toJS} from '../utils/immutableToJS'
-import {fetchScriptsIfNeeded, fetchSequencesifNeeded, setCurrentScriptId} from '../actions'
+import {fetchScriptsIfNeeded, fetchSequencesifNeeded, setCurrentScriptId, setCurrentScriptEditing} from '../actions'
 import {getCurrentScriptFormatted} from '../selectors'
 import {Link} from 'react-router-dom'
 import {Nav} from 'react-bootstrap'
 
 import '../app.css'
 
-class ScriptView extends Component {
+class ScriptEdit extends Component {
   componentDidMount(){
     this.props.fetchScripts()
     this.props.fetchSequences()
     this.props.setScript()
-    this.props.copyConsistentScript()
+    this.props.setCurrentScriptEditing()
   }
   render(){
     return (
@@ -56,10 +56,10 @@ const mapDispatchToProps = (dispatch, props) => ({
   fetchScripts: ()=>dispatch(fetchScriptsIfNeeded()),
   fetchSequences: ()=>dispatch(fetchSequencesifNeeded()),
   setScript: ()=>dispatch(setCurrentScriptId(props.match.params.id)),
-  copyConsistentScript: ()=>console.log('dispatch action to store consistent script')
+  setCurrentScriptEditing: ()=>dispatch(setCurrentScriptEditing(props.match.params.id)),
 })
 
 export default DragDropContext(HTML5Backend)(connect(
   mapStateToProps,
   mapDispatchToProps
-)(toJS(ScriptView)))
+)(toJS(ScriptEdit)))

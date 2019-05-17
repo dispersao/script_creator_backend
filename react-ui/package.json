@@ -13,7 +13,7 @@
     "normalizr": "^3.3.0",
     "prop-types": "^15.6.1",
     "react": "^16.8.3",
-    "react-bootstrap": "^1.0.0-beta.5",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-dnd": "^7.4.5",
     "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.8.3",

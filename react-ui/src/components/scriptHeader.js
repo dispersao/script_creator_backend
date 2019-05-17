@@ -1,15 +1,16 @@
 import React from 'react'
 import {Jumbotron} from 'react-bootstrap'
 import ScriptName from './scriptName'
-import ScriptAuthor from './scriptAuthor'
+import SaveCancelScript from './saveCancelScript'
 
-const ScriptHeader = ({name, author, id }) => {
+const ScriptHeader = (script) => {
   return (
     <Jumbotron className="ScriptHeaderView">
-      <ScriptName name={name} id={id}  />
+      <ScriptName name={script.name} id={script.id}  />
       <div>
-        by {author}
+        by {script.author}
       </div>
+      <SaveCancelScript script={script} />
     </Jumbotron>
   )
 }
