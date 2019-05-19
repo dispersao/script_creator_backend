@@ -96,12 +96,14 @@ function formatScriptResponse(context, script) {
 }
 
 function prepareInputData(context){
-  context.data.sequences = (context.data.sequences || []).map((sequenceId, index) => {
+  context.data.sequences = (context.data.sequences || [])
+  .filter(Boolean)
+  .map((sequenceId, index) => {
     return {
       sequenceId,
       index
     }
-  });
+  })
   return context;
 }
 
