@@ -28,7 +28,7 @@ const LoginComp = ({authenticate, user, location}) => {
   };
 
   if(user.authenticated){
-    let {from} = location.state && location.state.from.pathname !== '/login' ? location.state : { from: { pathname: "/scripts" }};
+    let {from} = location.state && location.state.from.pathname !== '/login' ? location.state : { from: { pathname: "/script" }};
     return <Redirect to={from} />
   } else if (user.loading){
     return(

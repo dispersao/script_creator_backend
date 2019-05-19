@@ -11,7 +11,7 @@ const ScriptCard = ({name, sequences, id, author, last_editor}) => {
           <span className="label label-default">{author}</span>
         </div>
         <div className="ScriptCardAuthorContainer">
-          <span>last edited by </span>
+          <span>edited by </span>
           <span className="label label-default">{last_editor}</span>
         </div>
         <div className="ScriptCardSequenceCount">

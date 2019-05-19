@@ -1,7 +1,8 @@
-import { normalizeScriptList} from '../schema'
-import {getScripts} from '../selectors'
+import { normalizeScriptList, normalizeScript} from '../schema'
+import {getScripts, getFilteredSequences} from '../selectors'
 import {scriptsService} from '../utils/feathers-app'
-import {scriptToStore} from '../utils/formatToApi'
+import {getRandomScriptSequences} from '../utils/scriptUtils'
+import history from '../utils/history'
 
 export const REQUEST_SCRIPTS = 'REQUEST_SCRIPTS'
 export const RECEIVE_SCRIPTS = 'RECEIVE_SCRIPTS'
@@ -44,11 +45,11 @@ export const setCurrentScript = (id) => {
 }
 
 
-export const scriptCreated = (oldId, script) => ({
+export const scriptCreated = (id, script) => ({
   type: SCRIPT_CREATED,
   payload: {
-    oldId,
-    script
+    script,
+    id
   }
 })
 
@@ -71,18 +72,31 @@ export const removeSequenceFromScript = (script, index) => (dispatch, getState) 
 
 export const changeScriptName = (script, name) => (dispatch, getState) => {
   dispatch(requestScript())
-  scriptsService.patch(script, {name: name})
+  scriptsService.patch(script, {name})
   .then(script => {
     return dispatch(receiveScript(script))
   })
 }
 
 
-export const createScript = (script) => dispatch => {
-  // dispatch(saveScript(script.id))
-  return scriptsService.create(script.id, scriptToStore(script))
-  .then(result => {
-    return dispatch(scriptCreated(normalizeScriptList(script.id, result.data)))
+export const createScript = (name) => dispatch => {
+  dispatch(requestScript())
+  return scriptsService.create({name})
+  .then(script => {
+    return dispatch(scriptCreated(script.id, normalizeScriptList([script])))
+  })
+  .then((s)=>{
+    history.push(`/script/${s.payload.id}/edit`)
+  })
+}
+
+export const createRandomScript = (script, total) => (dispatch, getState) => {
+  const filteredSequences = getFilteredSequences(getState())
+  const sequences = getRandomScriptSequences(filteredSequences.toJS(), parseInt(total))
+  dispatch(requestScript())
+  return scriptsService.patch(script, {sequences})
+  .then(script => {
+    return dispatch(receiveScript(script))
   })
 }
 

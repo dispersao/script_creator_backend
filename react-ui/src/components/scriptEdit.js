@@ -11,6 +11,8 @@ import {fetchScriptsIfNeeded, fetchSequencesifNeeded, setCurrentScriptId} from '
 import {getCurrentScriptFormatted, getScriptsLoading} from '../selectors'
 import {Link} from 'react-router-dom'
 import {Nav} from 'react-bootstrap'
+import RandomSequencesCreator from './randomSequencesCreator'
+
 
 import '../app.css'
 
@@ -24,7 +26,7 @@ class ScriptEdit extends Component {
     return (
       <div className="scriptView">
         <Nav>
-          <Link to="/scripts">Home</Link>
+          <Link to="/script">Home</Link>
         </Nav>
         {this.props.loading &&
           <Spinner animation="border" role="status">
@@ -39,8 +41,11 @@ class ScriptEdit extends Component {
                 <FullSequencesList />
               </section>
               <section className="scriptContainer">
-                {this.props.script && this.props.script.sequences.length &&
+                {this.props.script && this.props.script.sequences &&
                   <ScriptEditSequenceList sequences={this.props.script.sequences} />
+                }
+                {this.props.script && this.props.script.sequences && this.props.script.sequences.length === 0 &&
+                  <RandomSequencesCreator script={this.props.script} />
                 }
               </section>
             </div>

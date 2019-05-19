@@ -18,7 +18,7 @@ class ScriptListContainer extends Component{
       <ListGroup>
         { this.props.scripts && Object.keys(this.props.scripts).map((index) => (
           <ListGroup.Item key={index}>
-          <Link to={`scripts/${index}/edit`}>
+          <Link to={`script/${index}/edit`}>
             <ScriptCard key={index} {...this.props.scripts[index]} onClick={this.props.onClick} />
           </Link>
           </ListGroup.Item>

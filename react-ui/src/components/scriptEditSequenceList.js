@@ -3,7 +3,7 @@ import ScriptEditSequence from './scriptEditSequence'
 import DropSequenceArea from './dropSequenceArea'
 // import ScriptEditSequence from './draggableSequence'
 
-const ScriptEditSequenceList = ({sequences}) =>{
+const ScriptEditSequenceList = ({id, sequences}) =>{
   return(
     <div className="Screenplay reduced">
       {sequences && sequences.map((seq, index)=>(
