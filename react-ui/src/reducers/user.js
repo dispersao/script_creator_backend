@@ -17,7 +17,8 @@ const reducer = (state = initialScriptState, action) => {
       console.log(state)
       return state;
     case AUTHENTICATION_ERROR:
-      return state.set('authentication_error', action.payload)
+      state = state.mergeDeep(fromJS({loading: false, authentication_error: action.payload}))
+      return state
     case RECEIVE_USER:
      const data = {
        ...action.payload,

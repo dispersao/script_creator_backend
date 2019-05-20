@@ -13,6 +13,15 @@ const Root = ({ store }) => (
     <Router history={history}>
       <div>
         <Route exact={true} path="/login" component={Login}  />
+        <Route exact={true} path="/" component={()=>{
+          return(
+            <Redirect
+              to={{
+                pathname: "/script"
+              }}
+            />
+          )
+        }} />
         <PrivateRoute exact={true} path="/script" component={Home} getState={store.getState}/>
         <PrivateRoute exact={true} path="/script/new" component={ScriptView} getState={store.getState}/>
         <PrivateRoute exact={true} path="/script/:id" component={ScriptView} getState={store.getState}/>

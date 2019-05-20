@@ -1,6 +1,6 @@
 import React, {useState, useRef} from 'react'
 import {ButtonToolbar, Modal, Button, Form} from 'react-bootstrap'
-import {createScript, createRandomScript} from '../actions'
+import {createScript} from '../actions'
 import {connect} from 'react-redux'
 
 const NewScriptCard = (props) => {
@@ -9,24 +9,19 @@ const NewScriptCard = (props) => {
   // const amountEl = useRef(null)
 
   const newClick = () =>{
-    setViewState('new')
+    setViewState('modal')
   }
 
-  // const newRandomClick = () =>{
-  //   setViewState('random')
-  // }
-
   const onCancelClick = () =>{
-    setViewState(null)
+    setViewState('modalHide')
   }
 
   const onCreate = (event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    if(viewState === 'new'){
+    if(viewState === 'modal'){
       props.createNewScript(nameEl.current.value)
-    // } else if( viewState === 'random'){
 
     }
   }
@@ -37,7 +32,7 @@ const NewScriptCard = (props) => {
         <Button variant="outline-secondary" onClick={newClick}>New</Button>
       </ButtonToolbar>
 
-        <Modal show={viewState === 'random' || viewState === 'new'} onHide={onCancelClick}>
+        <Modal show={viewState === 'modal'} onHide={onCancelClick}>
           <Modal.Header closeButton>
             <Modal.Title>Create New Script</Modal.Title>
           </Modal.Header>
@@ -65,7 +60,6 @@ const NewScriptCard = (props) => {
 
 const mapDispatchToProps = (dispatch, props) => ({
   createNewScript: (name)=> dispatch(createScript(name)),
-  // createRandomNewScript: (name)=> dispatch(createRandomScript(name,sequences))
 })
 
 export default connect(

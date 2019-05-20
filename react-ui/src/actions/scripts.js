@@ -1,4 +1,4 @@
-import { normalizeScriptList, normalizeScript} from '../schema'
+import { normalizeScriptList} from '../schema'
 import {getScripts, getFilteredSequences} from '../selectors'
 import {scriptsService} from '../utils/feathers-app'
 import {getRandomScriptSequences} from '../utils/scriptUtils'

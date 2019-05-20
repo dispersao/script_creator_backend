@@ -62,7 +62,7 @@ const LoginComp = ({authenticate, user, location}) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   authenticate: (userdata)=> {
-    dispatch(authenticateIfNeeded())
+    dispatch(authenticateIfNeeded(userdata))
   }
 })
 

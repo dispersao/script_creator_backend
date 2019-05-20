@@ -19,9 +19,7 @@ export const getRandomScriptSequences = (sequences, total) => {
       seed = sequences.indexOf(possibleNextSequences[seed])
     }
     prevSeq = sequence = sequences.splice(seed, 1)[0]
-    console.log()
     return sequence.id;
   })
-  console.log("new script" + scriptSequences)
   return scriptSequences.filter(Boolean);
 }
