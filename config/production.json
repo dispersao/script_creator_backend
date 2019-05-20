@@ -1,6 +1,7 @@
 {
   "host": "feathers-basics-app.feathersjs.com",
   "port": "PORT",
+  "public": "../react-ui/build",
   "mysql": "CLEARDB_DATABASE_URL",
   "paginate": {
     "default": 100,
