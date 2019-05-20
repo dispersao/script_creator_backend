@@ -28,7 +28,8 @@
     "dev": "nodemon src/",
     "start": "node src/",
     "startDev": "node --inspect src/",
-    "jest": "jest"
+    "jest": "jest",
+    "build": "cd react-ui/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "dependencies": {
     "@feathersjs/authentication": "^2.1.16",
