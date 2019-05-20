@@ -29,7 +29,8 @@
     "start": "node src/",
     "startDev": "node --inspect src/",
     "jest": "jest",
-    "heroku-postbuild": "cd react-ui && npm install && npm run build"
+    "heroku-postbuild-old": "cd react-ui && npm install && npm run build",
+    "build": "cd react-ui/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "dependencies": {
     "@feathersjs/authentication": "^2.1.16",
@@ -51,7 +52,7 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "jest": "^24.8.0",
+    "jest": "24.7.1",
     "nodemon": "^1.18.11",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
