@@ -29,8 +29,8 @@
     "start": "node src/",
     "startDev": "node --inspect src/",
     "jest": "jest",
-    "heroku-postbuild-old": "cd react-ui && npm install && npm run build",
-    "build": "cd react-ui/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
+    "heroku-postbuild": "cd react-ui && npm install && npm run build",
+    "build-ol": "cd react-ui/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "dependencies": {
     "@feathersjs/authentication": "^2.1.16",
