@@ -96,7 +96,9 @@ function formatScriptResponse(context, script) {
 }
 
 function prepareInputData(context){
-  context.data.sequences = (context.data.sequences || [])
+  if(!context.data.sequences) return context;
+
+  context.data.sequences = context.data.sequences
   .filter(Boolean)
   .map((sequenceId, index) => {
     return {
@@ -108,6 +110,7 @@ function prepareInputData(context){
 }
 
 async function deleteSequenceScripts(context){
+  if(!context.data.sequences) return context;
   const toDelete = (context.result.script_sequences||[]).filter(seq =>{
     return context.data.sequences.every(s=> s.sequenceId !== seq.sequenceId)
   });
@@ -120,6 +123,7 @@ async function deleteSequenceScripts(context){
 }
 
 async function updateSequenceScript(context){
+  if(!context.data.sequences) return context;
   const toUpdate = context.data.sequences.filter(seq =>{
     const dbSs = (context.result.script_sequences||[]).find(s => {
       return s.sequenceId === seq.sequenceId && s.index !== seq.index
@@ -141,6 +145,7 @@ async function updateSequenceScript(context){
 }
 
 async function createSequenceScript(context){
+  if(!context.data.sequences) return context;
   const toCreate = (context.data.sequences).filter(seq =>{
     return (context.result.script_sequences||[]).every(s=> s.sequenceId !== seq.sequenceId)
   });

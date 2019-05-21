@@ -95,6 +95,7 @@
   height: 400px;
   overflow: auto;
   float: left;
+  width: 100%;
 }
 
 .sequencePicker .reduced .SequenceContainer {
