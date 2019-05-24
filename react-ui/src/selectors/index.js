@@ -112,6 +112,7 @@ const mountSequence = (sequence, types, locations, parts, characters) => {
     type: types.get(sequence.get('type').toString()),
     location: locations.get(sequence.get('location').toString()),
     characters: memoizedCharacters(sequence, parts).map(charId => characters.get(charId.toString())),
+    sceneNumber: sequence.get('sceneNumber'),
     parts: sequence.get('parts').map(partId => {
       let p = parts.get(partId.toString())
       let caracters = p.get('characters').map(charId => characters.get(charId.toString()))
