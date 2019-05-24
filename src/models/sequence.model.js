@@ -13,6 +13,7 @@ module.exports = function (app) {
   const Sequence = sequelizeClient.define('sequences', {
     isPlaying:  { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     hasPlayed:  { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    sceneNumber:  { type: DataTypes.STRING, allowNull: false },
   },{
     timestamps: false
   }, {
