@@ -61,6 +61,14 @@ export const addSequenceToScript = (script, sequence, index) => (dispatch, getSt
   })
 }
 
+export const addSequenceToEndOfScript = (script, sequence) => (dispatch, getState) => {
+  const list = getState().scriptData.getIn(['scripts', script.toString(), 'sequences']).push(sequence)
+  scriptsService.patch(script, {sequences:list.toJS()})
+  .then(script => {
+    return dispatch(receiveScript(script))
+  })
+}
+
 export const removeSequenceFromScript = (script, index) => (dispatch, getState) => {
   dispatch(requestScript())
   const list = getState().scriptData.getIn(['scripts', script.toString(), 'sequences']).delete(index)
