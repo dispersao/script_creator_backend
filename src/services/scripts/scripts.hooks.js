@@ -66,7 +66,9 @@ module.exports = {
       updateEditor,
       formatScript
     ],
-    remove: []
+    remove: [
+      deleteSequenceScripts
+    ]
   },
 
   error: {
@@ -79,6 +81,11 @@ module.exports = {
     remove: []
   }
 };
+
+function clearSequences(context){
+  debugger
+  return context
+}
 
 function formatScriptResponse(context, script) {
   const {id, name, author, last_editor} = script;
@@ -110,13 +117,21 @@ function prepareInputData(context){
 }
 
 async function deleteSequenceScripts(context){
-  if(!context.data.sequences) return context;
-  const toDelete = (context.result.script_sequences||[]).filter(seq =>{
-    return context.data.sequences.every(s=> s.sequenceId !== seq.sequenceId)
-  });
+  let toDelete;
+  if(context.method === 'remove'){
+    toDelete = context.result.script_sequences;
+  } else {
+    if(!context.data.sequences) {
+      return context;
+    }
+    toDelete = (context.result.script_sequences||[]).filter(seq =>{
+      return context.data.sequences.every(s=> s.sequenceId !== seq.sequenceId);
+    });
+  }
 
   await Promise.all(toDelete.map(seq=>{
-    return context.app.services['script-sequences'].remove(seq.id);
+    return seq.destroy();
+    // return context.app.services['script-sequences'].remove(seq.id);
   }));
 
   return context
