@@ -6,7 +6,8 @@ import {
   RECEIVE_SCRIPTS,
   RECEIVE_SCRIPT,
   SET_CURRENT_SCRIPT,
-  SCRIPT_CREATED
+  SCRIPT_CREATED,
+  SCRIPT_REMOVED
 } from '../actions'
 
 export const STATE_KEY = 'scriptData'
@@ -34,6 +35,10 @@ const reducer = (state = initialScriptState, action) => {
       newState = state.mergeDeep(fromJS(action.payload.script.entities))
       newState = newState.set('loading', false)
       return newState
+    case SCRIPT_REMOVED:
+        newState = state.removeIn(['scripts', action.payload.id.toString()])
+        newState = newState.set('loading', false)
+        return newState
     default:
       return state
   }

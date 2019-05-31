@@ -10,6 +10,7 @@ export const REQUEST_SCRIPT = 'REQUEST_SCRIPT'
 export const RECEIVE_SCRIPT = 'RECEIVE_SCRIPT'
 export const SET_CURRENT_SCRIPT = 'SET_CURRENT_SCRIPT'
 export const SCRIPT_CREATED = "SCRIPT_CREATED"
+export const SCRIPT_REMOVED = "SCRIPT_REMOVED"
 
 
 export const requestScripts = () => ({
@@ -49,6 +50,13 @@ export const scriptCreated = (id, script) => ({
   type: SCRIPT_CREATED,
   payload: {
     script,
+    id
+  }
+})
+
+export const scriptRemoved = (id) => ({
+  type: SCRIPT_REMOVED,
+  payload: {
     id
   }
 })
@@ -96,6 +104,14 @@ export const createScript = (name) => dispatch => {
   .then((s)=>{
     history.push(`/script/${s.payload.id}/edit`)
   })
+}
+
+export const removeScript = (id) => dispatch => {
+  dispatch(requestScript())
+  return scriptsService.remove(id)
+  .then(script => {
+    return dispatch(scriptRemoved(id))
+  });
 }
 
 export const createRandomScript = (script, total) => (dispatch, getState) => {

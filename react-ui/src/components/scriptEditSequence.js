@@ -10,7 +10,7 @@ const ScriptEditSequence = ({sequence, deleteSequence, index, script}) => {
 
   return (
     <div className="sequenceWrapper">
-      <button className="deleteSequence" onClick={()=>deleteSequence(script, index)}>X</button>
+      <button className="deleteSequence" onClick={()=>deleteSequence(script, index)}><i className="far fa-trash-alt"></i></button>
       <Sequence key={index} {...sequence}></Sequence>
     </div>
   )

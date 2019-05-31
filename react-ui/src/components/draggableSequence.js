@@ -25,7 +25,7 @@ function collect(connect, monitor) {
 function DraggableSequence({ connectDragSource, isDragging, sequence, script, includeSequence }) {
   return connectDragSource(
     <div className="dragContainer sequenceWrapper">
-      <button className="deleteSequence" onClick={()=>includeSequence(script, sequence.id)}>+</button>
+      <button className="deleteSequence" onClick={()=>includeSequence(script, sequence.id)}><i className="fas fa-arrow-right"></i></button>
       <Sequence key={sequence.id} {...sequence}></Sequence>
     </div>
   );

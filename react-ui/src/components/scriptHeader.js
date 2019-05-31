@@ -14,10 +14,10 @@ const ScriptHeader = (script) => {
       </div>
       <Nav className="right-aligned">
         {script.edit &&
-          <Link to={`/script/${script.id}`}>View</Link>
+          <Link to={`/script/${script.id}`}><i className="far fa-eye"></i></Link>
         }
         {!script.edit &&
-          <Link to={`/script/${script.id}/edit`}>Edit</Link>
+          <Link to={`/script/${script.id}/edit`}><i className="far fa-edit"></i></Link>
         }
       </Nav>
     </Jumbotron>

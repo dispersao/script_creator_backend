@@ -18,7 +18,8 @@ export const getRandomScriptSequences = (sequences, total) => {
       seed = Math.floor(Math.random() * Math.floor(possibleNextSequences.length - 1))
       seed = sequences.indexOf(possibleNextSequences[seed])
     }
-    prevSeq = sequence = sequences.splice(seed, 1)[0]
+    prevSeq = sequence = sequences.splice(seed, 1)[0];
+    console.log(index, sequence.id);
     return sequence.id;
   })
   return scriptSequences.filter(Boolean);
