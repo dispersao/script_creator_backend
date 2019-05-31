@@ -8,7 +8,6 @@ import {getCurrentScriptId} from '../selectors'
 
 const sequenceSource = {
   beginDrag(props) {
-    console.log(props)
     return {
       seqId: props.sequence.id
     };

@@ -88,6 +88,11 @@
   margin-bottom: 10px;
 }
 
+.sequencePicker .Screenplay.reduced {
+  max-height: 800px;
+  overflow-y: auto;
+}
+
 .reduced .SequenceContainer {
   background: #efefef;
   padding: 20px;
@@ -151,6 +156,13 @@
   position: absolute;
   top: 5px;
   right: 5px;
+}
+
+.minimizeSequence{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: 8px;
 }
 
 .dragContainer {
