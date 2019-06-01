@@ -93,6 +93,11 @@
   overflow-y: auto;
 }
 
+.scriptContainer .Screenplay.reduced{
+  max-height: 1035px;
+  overflow-y: auto;
+}
+
 .reduced .SequenceContainer {
   background: #efefef;
   padding: 20px;
@@ -135,6 +140,7 @@
 
 .ScriptHeaderView {
   padding: 1rem 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .ScriptName {

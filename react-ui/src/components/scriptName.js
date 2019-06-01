@@ -18,8 +18,9 @@ const ScriptName = ({name, id, saveName}) => {
              aria-describedby="basic-addon2"
              defaultValue={name}
              onBlur={(ev)=>{
-               saveName(ev.currentTarget.value)
                setEdit(false)
+               if(ev.currentTarget.value === name) return
+               saveName(ev.currentTarget.value)
              }}/>
             </InputGroup>
         }
