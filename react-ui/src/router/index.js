@@ -1,19 +1,31 @@
 import React from 'react'
+import history from '../utils/history'
 import PropTypes from 'prop-types'
 import { Provider } from 'react-redux'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Router, Route, Redirect } from 'react-router-dom'
 import ScriptView from '../components/scriptView'
 import ScriptEdit from '../components/scriptEdit'
 import Home from '../components/home'
+import Login from '../components/login'
 
 const Root = ({ store }) => (
   <Provider store={store}>
-    <Router>
+    <Router history={history}>
       <div>
-        <Route exact={true} path="/" component={Home} />
-        <Route exact={true} path="/new" component={ScriptView} />
-        <Route exact={true} path="/:id/edit" component={ScriptEdit} />
-        <Route exact={true} path="/:id" component={ScriptView} />
+        <Route exact={true} path="/login" component={Login}  />
+        <Route exact={true} path="/" component={()=>{
+          return(
+            <Redirect
+              to={{
+                pathname: "/script"
+              }}
+            />
+          )
+        }} />
+        <PrivateRoute exact={true} path="/script" component={Home} getState={store.getState}/>
+        <PrivateRoute exact={true} path="/script/new" component={ScriptView} getState={store.getState}/>
+        <PrivateRoute exact={true} path="/script/:id" component={ScriptView} getState={store.getState}/>
+        <PrivateRoute exact={true} path="/script/:id/edit" component={ScriptEdit} getState={store.getState}/>
       </div>
     </Router>
   </Provider>
@@ -21,6 +33,28 @@ const Root = ({ store }) => (
 
 Root.propTypes = {
   store: PropTypes.object.isRequired
+}
+
+const PrivateRoute = ({ component: Component, ...rest })=> {
+  return (
+    <Route exact={true}
+      {...rest}
+      render={props => {
+        if(rest.getState().user.get('authenticated')){
+          return <Component {...props} />
+        } else {
+          return (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: props.location }
+              }}
+            />
+          )
+        }
+      }}
+      />
+    )
 }
 
 export default Root

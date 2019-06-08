@@ -12,8 +12,15 @@ const scriptSchema = new schema.Entity('scripts', {
 
 const scriptsListSchema = [scriptSchema]
 
-const normalizeScriptData = (data) => {
+const normalizeScriptList = (data) => {
   return normalize(data, scriptsListSchema)
 }
 
-export {normalizeScriptData}
+const normalizeScript = (data) => {
+  return normalize(data, scriptSchema)
+}
+
+export {
+  normalizeScriptList,
+  normalizeScript
+}

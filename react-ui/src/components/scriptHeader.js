@@ -1,13 +1,27 @@
 import React from 'react'
 import {Jumbotron} from 'react-bootstrap'
 import ScriptName from './scriptName'
-import ScriptAuthor from './scriptAuthor'
+import {Link} from 'react-router-dom'
+import {Nav} from 'react-bootstrap'
 
-const ScriptHeader = ({name, author, id }) => {
+const ScriptHeader = (script) => {
+  console.log("ScriptHeader",script);
   return (
     <Jumbotron className="ScriptHeaderView">
-      <ScriptName name={name} id={id}  />
-      <ScriptAuthor author={author} id={id} />
+      <ScriptName name={script.name} id={script.id}  />
+      <div className="ScriptCardInfo">
+        <div>
+          by {script.author}
+        </div>
+        <Nav className="right-aligned">
+          {script.edit &&
+            <Link to={`/script/${script.id}`}><i className="far fa-eye"></i></Link>
+          }
+          {!script.edit &&
+            <Link to={`/script/${script.id}/edit`}><i className="far fa-edit"></i></Link>
+          }
+        </Nav>
+      </div>
     </Jumbotron>
   )
 }

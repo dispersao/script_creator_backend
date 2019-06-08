@@ -1,7 +1,7 @@
-// Initializes the `script_sequences` service on path `/script-sequences`
+// Initializes the `users` service on path `/users`
 const createService = require('feathers-sequelize');
-const createModel = require('../../models/script_sequences.model');
-const hooks = require('./script_sequences.hooks');
+const createModel = require('../../models/users.model');
+const hooks = require('./users.hooks');
 
 module.exports = function (app) {
   const Model = createModel(app);
@@ -13,10 +13,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/script-sequences', createService(options));
+  app.use('/users', createService(options));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('script-sequences');
+  const service = app.service('users');
 
   service.hooks(hooks);
 };

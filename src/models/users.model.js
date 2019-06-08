@@ -5,11 +5,21 @@ const DataTypes = Sequelize.DataTypes;
 
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
-  const ScriptSequence = sequelizeClient.define('script_sequences', {
-    index: {
-      type: DataTypes.INTEGER,
+  const users = sequelizeClient.define('users', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: DataTypes.STRING,
       allowNull: false
     }
+
   }, {
     hooks: {
       beforeCount(options) {
@@ -19,12 +29,11 @@ module.exports = function (app) {
   });
 
   // eslint-disable-next-line no-unused-vars
-  ScriptSequence.associate = function (models) {
-    ScriptSequence.belongsTo(models['sequences'], {
-    });
-    ScriptSequence.belongsTo(models['scripts'], {
-    });
+  users.associate = function (models) {
+    // users.hasMany(models['scripts'], {
+    //   as: 'author'
+    // });
   };
 
-  return ScriptSequence;
+  return users;
 };

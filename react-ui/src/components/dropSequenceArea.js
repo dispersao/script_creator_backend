@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
 import { DropTarget } from 'react-dnd'
-import {addSequenceToScriptAt} from '../actions'
+import {addSequenceToScript} from '../actions'
 import {getCurrentScriptId} from '../selectors'
 
 const sequenceTarget = {
@@ -40,7 +40,7 @@ const mapStateToProps= (state,props) => {
 
 const mapDispatchToProps = (dispatch, props) => ({
   includeSequence: (seq, script, index)=>{
-    dispatch(addSequenceToScriptAt(script, seq, index))
+    dispatch(addSequenceToScript(script, seq, index))
   }
 })
 
