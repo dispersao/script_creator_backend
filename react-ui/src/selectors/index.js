@@ -17,6 +17,9 @@ const getSequenceFilters = state => state.sequenceFilters;
 const getEntryListByname = (state, name) => state.sequenceData.get(name)
 const getSequenceFilterByName = (state, name) => state.sequenceFilters.get(name)
 
+const getLogedUser = (state) => state.user
+const getScriptsLoading = (state) => state.scriptData.get('loading')
+
 const getSequenceCharacters = (sequence, parts) => {
   let chars = sequence.get('parts').map(pid => parts.get(pid.toString()).get('characters'))
   chars = chars.flatMap(c => c.valueSeq().toArray())
@@ -87,6 +90,9 @@ const getCurrentScriptFormatted = createSelector(
         name: script.get('name'),
         id: script.get('id'),
         author: script.get('author'),
+        last_editor: script.get('last_editor'),
+        synched: script.get('synched'),
+        new: script.get('new'),
         // sequences: script.get('scriptSequences').map((scriptSeqId, index) => {
         sequences: script.get('sequences').map((seqId, index) => {
           // const scriptSeq = scriptSequences.get(scriptSeqId.toString())
@@ -97,6 +103,7 @@ const getCurrentScriptFormatted = createSelector(
       })
     }
   )
+
 // }
 
 const mountSequence = (sequence, types, locations, parts, characters) => {
@@ -105,6 +112,7 @@ const mountSequence = (sequence, types, locations, parts, characters) => {
     type: types.get(sequence.get('type').toString()),
     location: locations.get(sequence.get('location').toString()),
     characters: memoizedCharacters(sequence, parts).map(charId => characters.get(charId.toString())),
+    sceneNumber: sequence.get('sceneNumber'),
     parts: sequence.get('parts').map(partId => {
       let p = parts.get(partId.toString())
       let caracters = p.get('characters').map(charId => characters.get(charId.toString()))
@@ -131,4 +139,17 @@ const filterField =  (filter, field) => {
   return shouldInclude
 }
 
-export { getCharacters, getLocations, getParts, getFilteredSequences, getSequenceFilterByName, getEntryListByname, getScripts , getSequences, getCurrentScriptId, getCurrentScriptFormatted};
+export {
+  getLogedUser,
+  getCharacters,
+  getLocations,
+  getParts,
+  getFilteredSequences,
+  getSequenceFilterByName,
+  getEntryListByname,
+  getScripts,
+  getSequences,
+  getCurrentScriptId,
+  getCurrentScriptFormatted,
+  getScriptsLoading
+};

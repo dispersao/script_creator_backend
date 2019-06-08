@@ -3,13 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@feathersjs/authentication-client": "^1.0.11",
+    "@feathersjs/client": "^3.7.8",
+    "@feathersjs/feathers": "^3.3.1",
+    "@feathersjs/rest-client": "^1.4.7",
     "bootstrap": "^4.3.1",
+    "history": "^4.9.0",
     "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.11",
     "normalizr": "^3.3.0",
     "prop-types": "^15.6.1",
     "react": "^16.8.3",
-    "react-bootstrap": "^1.0.0-beta.5",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-dnd": "^7.4.5",
     "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.8.3",
@@ -22,6 +27,9 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0"
+  },
+  "devDependencies": {
+
   },
   "scripts": {
     "start": "react-scripts start",

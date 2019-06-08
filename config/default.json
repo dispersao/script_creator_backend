@@ -2,10 +2,34 @@
   "host": "localhost",
   "port": 3030,
   "public": "../react-ui/build/",
-  "apiPath" : "api",
+  "apiPath": "api",
   "paginate": {
-    "default": 100,
-    "max": 100
+    "default": 200,
+    "max": 200
   },
-  "mysql": "mysql://root:password@127.0.0.1/dispersao_sequences2"
+  "mysql": "mysql://root:password@127.0.0.1/dispersao_sequences2",
+  "authentication": {
+    "secret": "JWT_SECRET",
+    "strategies": [
+      "jwt",
+      "local"
+    ],
+    "path": "/authentication",
+    "service": "users",
+    "jwt": {
+      "header": {
+        "typ": "access"
+      },
+      "audience": "https://dispersao-scripts.heroku.com",
+      "subject": "scripts_log",
+      "issuer": "mairasala",
+      "algorithm": "HS256",
+      "expiresIn": "1y"
+    },
+    "local": {
+      "entity": "user",
+      "usernameField": "email",
+      "passwordField": "password"
+    }
+  }
 }

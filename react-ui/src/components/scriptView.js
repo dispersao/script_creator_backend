@@ -21,11 +21,11 @@ class ScriptView extends Component {
     return (
       <div className="scriptView">
         <Nav>
-          <Link to="/">Home</Link>
+          <Link to="/script">Home</Link>
         </Nav>
         {this.props.script &&
           <div>
-            <ScriptHeader {...this.props.script} />
+            <ScriptHeader {...this.props.script} edit={false} />
             <div className="scriptEditorSequencesContainer">
               <section className="scriptContainer">
                 {this.props.script && this.props.script.sequences.length &&

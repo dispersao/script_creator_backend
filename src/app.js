@@ -18,6 +18,8 @@ const channels = require('./channels');
 
 const sequelize = require('./sequelize');
 
+const authentication = require('./authentication');
+
 const app = express(feathers());
 
 // Load app configuration
@@ -45,7 +47,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 // Host the public folder
-app.use('/', express.static(app.get('public')));
+app.use(express.static(app.get('public')));
+// app.use('/', express.static(app.get('public')));
 
 // Set up Plugins and providers
 app.configure(express.rest());
@@ -55,6 +58,7 @@ app.configure(sequelize);
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
+app.configure(authentication);
 // Set up our services (see `services/index.js`)
 app.configure(services);
 // Set up event channels (see channels.js)
