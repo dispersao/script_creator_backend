@@ -110,6 +110,7 @@ $RECYCLE.BIN/
 # Others
 lib/
 data/
+videos/
 
 package-lock.json
 

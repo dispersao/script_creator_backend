@@ -12,7 +12,7 @@ module.exports = {
         };
         return Promise.resolve(context);
       }
-  ],
+    ],
     find: [],
     get: [],
     create: [],
@@ -35,7 +35,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [errorCreateHandler],
+    create: [],
     update: [],
     patch: [],
     remove: []
@@ -43,20 +43,10 @@ module.exports = {
 };
 
 async function createParts(context){
-  let promises = context.result.parts.map((p, i)=>{
-    return p.setCharacters(context.data.parts[p.index].characters_ids)
-      .then(e => {
-        console.log(context.data.parts[p.index])
-        console.log(e)
-      })
-      .catch(e=> console.log(e))
+  let promises = context.result.parts.map(p =>{
+    return p.setCharacters(context.data.parts[p.index].characters_ids).catch(e=> console.log(e))
   })
 
-  const filledPromises = await Promise.all(promises)
-
+  await Promise.all(promises)
   return context
-}
-
-function errorCreateHandler(data){
-  console.log(data)
 }

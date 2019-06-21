@@ -1,20 +1,22 @@
 const fs = require('fs');
 const fountain = require('./fountain-master/index');
+const padStart = require('lodash/padStart');
+const isNaN = require('lodash/isNaN');
+const ffmpeg = require('ffmpeg');
 
 
-parseFile = app => {
+const parseFile = async (app) => {
   if(process.env.PARSE_SCRIPT){
-    let fountainFile = __dirname + "/" + process.env.PARSE_SCRIPT;
+    let fountainFile = __dirname + '/' + process.env.PARSE_SCRIPT;
 
-    fs.readFile(fountainFile, 'utf-8', (err, data) => {
+    fs.readFile(fountainFile, 'utf-8', async (err, data) => {
       if(err){
         console.log(err);
       } else {
-        const script = data;
         const film = fountain.parse(data, true, processTokens);
         film.sequences.map(({type, location, number}) => ({type, location, number}));
         includeNonDialogueCharsToScenes(film);
-        includeSeqTime(film);
+        film.sequences = await includeSeqTime(film.sequences);
         store(film, app);
       }
     });
@@ -22,105 +24,98 @@ parseFile = app => {
 }
 
 const processTokens = output => {
-    const sequences = [];
-    const characters = [];
-    const types = [];
-    const locations = [];
-    let sequence;
+  const sequences = [];
+  const characters = [];
+  const types = [];
+  const locations = [];
+  let sequence;
 
-    output.tokens.forEach(token =>{
+  output.tokens.forEach(token =>{
 
-      switch(token.type){
+    switch(token.type){
 
-        case 'scene_heading':
-          sequence = {characters:[], content:'', actions:[], parts: [], categories:[]};
-          const type_location = token.text.split('-');
-          sequence.type = type_location[0].trim();
-          sequence.location = type_location[1].trim();
-          sequence.sceneNumber = token.scene_number;
+    case 'scene_heading':
+      sequence = {characters:[], content:'', actions:[], parts: [], categories:[]};
+      const type_location = token.text.split('-');
+      sequence.type = type_location[0].trim();
+      sequence.location = type_location[1].trim();
+      sequence.sceneNumber = token.scene_number;
 
-          addUniqueElement(types, sequence.type);
-          addUniqueElement(locations, sequence.location);
+      addUniqueElement(types, sequence.type);
+      addUniqueElement(locations, sequence.location);
 
-          sequences.push(sequence);
-        break;
+      sequences.push(sequence);
+      break;
 
-        case 'note':
-          sequence.categories.push({text: token.text})
-        break;
+    case 'note':
+      sequence.categories.push({text: token.text})
+      break;
 
-        case 'dialogue_begin':
-          sequence.parts.push({index: sequence.parts.length, type: 'dialogue'});
-        break;
+    case 'dialogue_begin':
+      sequence.parts.push({index: sequence.parts.length, type: 'dialogue'});
+      break;
 
-        case 'character':
-          const char = token.text;
-          sequence.parts[sequence.parts.length -1].characters = [char];
-          addUniqueElement(sequence.characters, char);
-          addUniqueElement(characters, char);
-        break;
+    case 'character':
+      const char = token.text;
+      sequence.parts[sequence.parts.length -1].characters = [char];
+      addUniqueElement(sequence.characters, char);
+      addUniqueElement(characters, char);
+      break;
 
-        case 'parenthetical':
-          sequence.parts[sequence.parts.length -1].extra = token.text;
-        break;
+    case 'parenthetical':
+      sequence.parts[sequence.parts.length -1].extra = token.text;
+      break;
 
-        case 'dialogue':
-          sequence.parts[sequence.parts.length -1].content = token.text;
-        break;
+    case 'dialogue':
+      sequence.parts[sequence.parts.length -1].content = token.text;
+      break;
 
-        case 'action':
-          let action = token.text;
-          sequence.actions.push(action);
-          let type = 'action';
-          const regExp = new RegExp("(\\-\\-)(.*)(\\-\\-)", 'gm');
-          if(action.match(regExp)){
-            type = "observation";
-            action = action.replace(regExp, '$2')
-          }
-          sequence.parts.push({index: sequence.parts.length, type: type , content: action});
-        break;
+    case 'action':
+      let action = token.text;
+      sequence.actions.push(action);
+      let type = 'action';
+      const regExp = new RegExp("(\\-\\-)(.*)(\\-\\-)", 'gm');
+      if(action.match(regExp)){
+        type = 'observation';
+        action = action.replace(regExp, '$2')
       }
-      if(sequence && token.text != undefined && token.type !== 'scene_heading'){
-        sequence.content+= token.text + '<br />';
-      }
-    });
-    return {sequences: sequences, characters: characters, types: types, locations: locations};
+      sequence.parts.push({index: sequence.parts.length, type: type , content: action});
+      break;
+    }
+    if(sequence && token.text != undefined && token.type !== 'scene_heading'){
+      sequence.content+= token.text + '<br />';
+    }
+  });
+  return {sequences: sequences, characters: characters, types: types, locations: locations};
 }
 
 const includeNonDialogueCharsToScenes = (film) => {
   film.sequences.forEach(sequence => {
     sequence.parts
-    .filter(part => part.type === 'action')
-    .forEach(actionPart => {
-      actionPart.characters = [];
-      film.characters.forEach(char => {
-        const reg = new RegExp(`\\b${char}\\b(?!\\|)`, 'gmi');
-        if(actionPart.content.match(reg)){
-          addUniqueElement(sequence.characters, char, true);
-          addUniqueElement(actionPart.characters, char, true);
-        }
+      .filter(part => part.type === 'action')
+      .forEach(actionPart => {
+        actionPart.characters = [];
+        film.characters.forEach(char => {
+          const reg = new RegExp(`\\b${char}\\b(?!\\|)`, 'gmi');
+          if(actionPart.content.match(reg)){
+            addUniqueElement(sequence.characters, char, true);
+            addUniqueElement(actionPart.characters, char, true);
+          }
+        });
       });
-    });
   });
 }
 
 const store = async (film, app) => {
-
   const fields = ['locations', 'characters', 'types'];
   let entries = {};
 
-   fields.forEach(field => {
-     entries[field] = film[field].map((entryname, index) => {
-        let entry = { name: entryname };
-        return app.services[field].create({
-          name: entryname
-        })
-        .then(e => {
-          console.log(e)
-          return e
-        })
-        .catch(e => console.log(e))
-      });
+  fields.forEach(field => {
+    entries[field] = film[field].map(entryname => {
+      return app.services[field].create({
+        name: entryname
+      }).catch(e => console.log(e))
+    });
   });
 
   let locations = await Promise.all(entries.locations)
@@ -132,6 +127,7 @@ const store = async (film, app) => {
       sceneNumber: seq.sceneNumber,
       locationId: locations.find(e => e.name === seq.location).id,
       typeId: types.find(e => e.name === seq.type).id,
+      duration: (seq.duration || 0),
       parts: seq.parts.map(p =>({
         index: p.index,
         content: p.content,
@@ -146,14 +142,12 @@ const store = async (film, app) => {
 }
 
 const createSeq = (seqs, index, app) => {
-  console.log(seqs[index])
   app.services.sequences.create(seqs[index])
   .then(el => {
-    console.log(el)
     if(index < seqs.length - 1){
       createSeq(seqs, index + 1, app)
     } else {
-      console.log('end of crations')
+      console.log('-----end of parsing------')
     }
   })
   .catch(e => console.log(e))
@@ -165,9 +159,34 @@ const addUniqueElement = (chars, char, log) => {
   }
 }
 
-const includeSeqTime = (film)=>{
-  let videosFilder = __dirname + "/" + process.env.VIDEOS_FOLDER;
+const includeSeqTime = async (seqs)=>{
+  let videosFolder = __dirname + '/' + process.env.VIDEOS_FOLDER;
 
+  let promises = seqs.map(seq => {
+    let padCount = isNaN(Number(seq.sceneNumber.slice(-1))) ? 4 : 3;
+    let videoFile = `${videosFolder}/${padStart(seq.sceneNumber, padCount, '0')}.mov`;
+
+    let p;
+    try{
+      let process = new ffmpeg(videoFile);
+      p = process.then(video => {
+        return video.metadata.duration.seconds
+      }).catch(e => {
+        console.dir(seq.sceneNumber, e)
+      })
+    } catch(e){
+      console.log(seq.sceneNumber, e)
+    }
+    return p;
+  })
+  let seconds = await Promise.all(promises)
+  seqs.forEach((s,index) => {
+    if(seconds[index]){
+      s.duration = seconds[index]
+    }
+  })
+
+  return seqs;
 }
 
 module.exports = {

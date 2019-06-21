@@ -14,6 +14,7 @@ module.exports = function (app) {
     isPlaying:  { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     hasPlayed:  { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     sceneNumber:  { type: DataTypes.STRING, allowNull: false },
+    duration: { type: DataTypes.INTEGER, defaultValue: 0 }
   },{
     timestamps: false
   }, {
