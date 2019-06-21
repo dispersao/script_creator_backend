@@ -25,7 +25,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [createParts],
     update: [],
     patch: [],
     remove: []
@@ -35,9 +35,28 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [errorCreateHandler],
     update: [],
     patch: [],
     remove: []
   }
 };
+
+async function createParts(context){
+  let promises = context.result.parts.map((p, i)=>{
+    return p.setCharacters(context.data.parts[p.index].characters_ids)
+      .then(e => {
+        console.log(context.data.parts[p.index])
+        console.log(e)
+      })
+      .catch(e=> console.log(e))
+  })
+
+  const filledPromises = await Promise.all(promises)
+
+  return context
+}
+
+function errorCreateHandler(data){
+  console.log(data)
+}

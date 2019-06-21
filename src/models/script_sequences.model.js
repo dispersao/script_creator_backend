@@ -18,8 +18,6 @@ module.exports = function (app) {
     }
   });
 
-  console.log(scriptSequences);
-
   // eslint-disable-next-line no-unused-vars
   scriptSequences.associate = function (models) {
     scriptSequences.belongsTo(models['sequences'], {
