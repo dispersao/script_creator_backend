@@ -110,6 +110,8 @@ const store = async (film, app) => {
   const fields = ['locations', 'characters', 'types'];
   let entries = {};
 
+  return
+
   fields.forEach(field => {
     entries[field] = film[field].map(entryname => {
       return app.services[field].create({
@@ -164,12 +166,22 @@ const includeSeqTime = async (seqs)=>{
 
   let promises = seqs.map(seq => {
     let padCount = isNaN(Number(seq.sceneNumber.slice(-1))) ? 4 : 3;
-    let videoFile = `${videosFolder}/${padStart(seq.sceneNumber, padCount, '0')}.mov`;
+    let fileName = padStart(seq.sceneNumber, padCount, '0');
+    let videoFile = `${videosFolder}/${fileName}.mov`;
 
     let p;
     try{
       let process = new ffmpeg(videoFile);
       p = process.then(video => {
+        video.fnExtractFrameToJPG(`${videosFolder}/photos`, {
+          frame_rate : 1,
+          start_time: 5,
+          number : 1,
+          file_name : `${fileName}`
+        }, (error, files) => {
+          if(error) console.log(error)
+          else console.log(files)
+        })
         return video.metadata.duration.seconds
       }).catch(e => {
         console.dir(seq.sceneNumber, e)
