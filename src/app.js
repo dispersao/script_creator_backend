@@ -20,6 +20,8 @@ const sequelize = require('./sequelize');
 
 const authentication = require('./authentication');
 
+const parser = require('./script-parser/parser')
+
 const app = express(feathers());
 
 // Load app configuration
@@ -60,7 +62,7 @@ app.configure(sequelize);
 app.configure(middleware);
 app.configure(authentication);
 // Set up our services (see `services/index.js`)
-app.configure(services);
+let servicesCreation = app.configure(services);
 // Set up event channels (see channels.js)
 app.configure(channels);
 
@@ -69,5 +71,8 @@ app.use(express.notFound());
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
+
+setTimeout(()=>parser.parseFile(app), 2000)
+
 
 module.exports = app;

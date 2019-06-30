@@ -104,12 +104,18 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+*.fountain
+
 # Windows shortcuts
 *.lnk
 
 # Others
 lib/
 data/
+videos/
+src/script-parser/fountain-master/
+
+
 
 package-lock.json
 

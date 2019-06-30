@@ -12,7 +12,7 @@ module.exports = {
         };
         return Promise.resolve(context);
       }
-  ],
+    ],
     find: [],
     get: [],
     create: [],
@@ -25,7 +25,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [createParts],
     update: [],
     patch: [],
     remove: []
@@ -41,3 +41,12 @@ module.exports = {
     remove: []
   }
 };
+
+async function createParts(context){
+  let promises = context.result.parts.map(p =>{
+    return p.setCharacters(context.data.parts[p.index].characters_ids).catch(e=> console.log(e))
+  })
+
+  await Promise.all(promises)
+  return context
+}
