@@ -1,8 +1,11 @@
 const fs = require('fs');
 const fountain = require('./fountain-master/index');
-const padStart = require('lodash/padStart');
-const isNaN = require('lodash/isNaN');
-const ffmpeg = require('ffmpeg');
+const includeSeqTime = require('./video_process');
+const processCategories = require('./category_processor');
+const uniqBy = require('lodash/uniqBy');
+const uniq = require('lodash/uniq');
+const difference = require('lodash/difference');
+const store = require('./store');
 
 
 const parseFile = async (app) => {
@@ -15,7 +18,7 @@ const parseFile = async (app) => {
       } else {
         const film = fountain.parse(data, true, processTokens);
         film.sequences.map(({type, location, number}) => ({type, location, number}));
-        includeNonDialogueCharsToScenes(film);
+        includeCharacters(film);
         film.sequences = await includeSeqTime(film.sequences);
         store(film, app);
       }
@@ -24,42 +27,49 @@ const parseFile = async (app) => {
 }
 
 const processTokens = output => {
-  const sequences = [];
-  const characters = [];
-  const types = [];
-  const locations = [];
+  let sequences = [];
+  let characters = [];
+  let types = [];
+  let locations = [];
+  let categories = [];
   let sequence;
+
+  let type_location, action, char, type;
+  const regExp = new RegExp('(\\-\\-)(.*)(\\-\\-)', 'gm');
 
   output.tokens.forEach(token =>{
 
     switch(token.type){
 
     case 'scene_heading':
+    console.log(token);
       sequence = {characters:[], content:'', actions:[], parts: [], categories:[]};
-      const type_location = token.text.split('-');
+      type_location = token.text.split('-');
       sequence.type = type_location[0].trim();
       sequence.location = type_location[1].trim();
       sequence.sceneNumber = token.scene_number;
 
-      addUniqueElement(types, sequence.type);
-      addUniqueElement(locations, sequence.location);
+      types = addUniqueElement(types, sequence.type);
+      locations = addUniqueElement(locations, sequence.location);
 
       sequences.push(sequence);
       break;
 
     case 'note':
-      sequence.categories.push({text: token.text})
+      sequence.categories = addUniqueElement(sequence.categories, processCategories(token, categories), 'text');
+      categories = addUniqueElement(categories, sequence.categories, 'text');
       break;
+
 
     case 'dialogue_begin':
       sequence.parts.push({index: sequence.parts.length, type: 'dialogue'});
       break;
 
     case 'character':
-      const char = token.text;
+      char = token.text;
       sequence.parts[sequence.parts.length -1].characters = [char];
-      addUniqueElement(sequence.characters, char);
-      addUniqueElement(characters, char);
+      sequence.characters = addUniqueElement(sequence.characters, char);
+      characters = addUniqueElement(characters, char);
       break;
 
     case 'parenthetical':
@@ -71,10 +81,9 @@ const processTokens = output => {
       break;
 
     case 'action':
-      let action = token.text;
+      action = token.text;
       sequence.actions.push(action);
-      let type = 'action';
-      const regExp = new RegExp("(\\-\\-)(.*)(\\-\\-)", 'gm');
+      type = 'action';
       if(action.match(regExp)){
         type = 'observation';
         action = action.replace(regExp, '$2')
@@ -86,120 +95,56 @@ const processTokens = output => {
       sequence.content+= token.text + '<br />';
     }
   });
-  return {sequences: sequences, characters: characters, types: types, locations: locations};
+  return {
+    sequences,
+    characters,
+    types,
+    locations,
+    categories
+  };
 }
 
-const includeNonDialogueCharsToScenes = (film) => {
-  film.sequences.forEach(sequence => {
-    sequence.parts
-      .filter(part => part.type === 'action')
-      .forEach(actionPart => {
-        actionPart.characters = [];
-        film.characters.forEach(char => {
-          const reg = new RegExp(`\\b${char}\\b(?!\\|)`, 'gmi');
-          if(actionPart.content.match(reg)){
-            addUniqueElement(sequence.characters, char, true);
-            addUniqueElement(actionPart.characters, char, true);
-          }
-        });
-      });
-  });
-}
-
-const store = async (film, app) => {
-  const fields = ['locations', 'characters', 'types'];
-  let entries = {};
-
-  return
-
-  fields.forEach(field => {
-    entries[field] = film[field].map(entryname => {
-      return app.services[field].create({
-        name: entryname
-      }).catch(e => console.log(e))
-    });
-  });
-
-  let locations = await Promise.all(entries.locations)
-  let types = await Promise.all(entries.types)
-  let characters = await Promise.all(entries.characters)
-
-  let sequencesData = film.sequences.map(seq => {
-    let mapped = {
-      sceneNumber: seq.sceneNumber,
-      locationId: locations.find(e => e.name === seq.location).id,
-      typeId: types.find(e => e.name === seq.type).id,
-      duration: (seq.duration || 0),
-      parts: seq.parts.map(p =>({
-        index: p.index,
-        content: p.content,
-        type: p.type,
-        characters_ids: (p.characters ||[]).map(ch => characters.find(cch=> cch.name === ch).id)
-      }))
-    }
-    return mapped;
+const includeCharacters = (film) => {
+  film.sequences.forEach(s => {
+    let partsToAddChars = s.parts.filter(p => p.type === 'action');
+    const otherParts = difference(s.parts, partsToAddChars);
+    partsToAddChars = addCharacters(partsToAddChars, film.characters, 'content');
+    s.parts = otherParts.concat(otherParts, partsToAddChars);
   })
 
-  createSeq(sequencesData, 0, app)
+
+  let categoriesToAddChars = film.categories.filter(cat => cat.type === 'arc')
+  const otherCategories = difference(film.categories, categoriesToAddChars);
+  categoriesToAddChars = addCharacters(categoriesToAddChars, film.characters, 'text');
+  film.categories = categoriesToAddChars.concat(otherCategories);
 }
 
-const createSeq = (seqs, index, app) => {
-  app.services.sequences.create(seqs[index])
-  .then(el => {
-    if(index < seqs.length - 1){
-      createSeq(seqs, index + 1, app)
-    } else {
-      console.log('-----end of parsing------')
-    }
+const addCharacters = (elements, characters, field) => {
+  return elements.map(el => {
+    el.characters = [];
+    characters.forEach(char => {
+      const reg = new RegExp(`\\b${char}\\b(?!\\|)`, 'gmi');
+      if(el[field].match(reg)){
+        el.characters = addUniqueElement(el.characters, char);
+      }
+    })
+    return el;
   })
-  .catch(e => console.log(e))
 }
 
-const addUniqueElement = (chars, char, log) => {
-  if(!chars.includes(char)){
-    chars.push(char);
+const addUniqueElement = (list, el, field) => {
+  if(Array.isArray(el)){
+    list = list.concat(el);
+  } else {
+    list.push(el);
+  }
+  if(field){
+    return uniqBy(list, field);
+  } else{
+    return uniq(list);
   }
 }
 
-const includeSeqTime = async (seqs)=>{
-  let videosFolder = __dirname + '/' + process.env.VIDEOS_FOLDER;
-
-  let promises = seqs.map(seq => {
-    let padCount = isNaN(Number(seq.sceneNumber.slice(-1))) ? 4 : 3;
-    let fileName = padStart(seq.sceneNumber, padCount, '0');
-    let videoFile = `${videosFolder}/${fileName}.mov`;
-
-    let p;
-    try{
-      let process = new ffmpeg(videoFile);
-      p = process.then(video => {
-        video.fnExtractFrameToJPG(`${videosFolder}/photos`, {
-          frame_rate : 1,
-          start_time: 5,
-          number : 1,
-          file_name : `${fileName}`
-        }, (error, files) => {
-          if(error) console.log(error)
-          else console.log(files)
-        })
-        return video.metadata.duration.seconds
-      }).catch(e => {
-        console.dir(seq.sceneNumber, e)
-      })
-    } catch(e){
-      console.log(seq.sceneNumber, e)
-    }
-    return p;
-  })
-  let seconds = await Promise.all(promises)
-  seqs.forEach((s,index) => {
-    if(seconds[index]){
-      s.duration = seconds[index]
-    }
-  })
-
-  return seqs;
-}
 
 module.exports = {
   parseFile: parseFile

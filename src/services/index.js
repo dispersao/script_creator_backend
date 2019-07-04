@@ -6,6 +6,7 @@ const types = require('./types/types.service.js');
 const locations = require('./locations/locations.service.js');
 const characters = require('./characters/characters.service.js');
 const parts = require('./parts/parts.service.js');
+const categories = require('./categories/categories.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(sequences);
@@ -16,4 +17,5 @@ module.exports = function (app) {
   app.configure(locations);
   app.configure(characters);
   app.configure(parts);
+  app.configure(categories);
 };
