@@ -1,0 +1,15 @@
+{
+  "name": "fountain",
+  "repo": "whyohwhyamihere/fountain",
+  "description": "A text parser for .fountain screenplay documents",
+  "version": "0.1.10",
+  "keywords": [
+    "fountain",
+    "screenplay",
+    "movie"
+  ],
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}
