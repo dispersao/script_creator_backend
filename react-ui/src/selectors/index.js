@@ -31,6 +31,19 @@ const memoizedCharacters = createSelector(
   chars => chars
 )
 
+const getScriptsWithDuration = createSelector(
+  getScripts,
+  getSequences,
+  (scripts, sequences) => {
+    if(scripts && sequences){
+      return scripts.map(scr => {
+        const duration = scr.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration'))
+        return scr.set('duration', duration.toString().toHHMMSS())
+      })
+    }
+  }
+)
+
 const getFilteredSequences = createSelector(
   getSequences,
   getParts,
@@ -93,12 +106,10 @@ const getCurrentScriptFormatted = createSelector(
         last_editor: script.get('last_editor'),
         synched: script.get('synched'),
         new: script.get('new'),
-        // sequences: script.get('scriptSequences').map((scriptSeqId, index) => {
+        duration: script.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration')).toString().toHHMMSS(),
         sequences: script.get('sequences').map((seqId, index) => {
-          // const scriptSeq = scriptSequences.get(scriptSeqId.toString())
           let seq = sequences.get(seqId.toString())
           return mountSequence(seq, types, locations, parts, characters)
-          // return seq.set('index', scriptSeq.get('index'))
         })
       })
     }
@@ -131,7 +142,11 @@ String.prototype.toHHMMSS = function () {
     if (hours   < 10) {hours   = "0"+hours;}
     if (minutes < 10) {minutes = "0"+minutes;}
     if (seconds < 10) {seconds = "0"+seconds;}
-    return minutes+':'+seconds;
+    if(hours === '00'){
+      return minutes+':'+seconds;
+    } else {
+      return hours+':'+minutes+':'+seconds
+    }
 }
 
 
@@ -164,5 +179,6 @@ export {
   getSequences,
   getCurrentScriptId,
   getCurrentScriptFormatted,
-  getScriptsLoading
+  getScriptsLoading,
+  getScriptsWithDuration
 };
