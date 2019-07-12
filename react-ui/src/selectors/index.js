@@ -37,7 +37,8 @@ const getScriptsWithDuration = createSelector(
   (scripts, sequences) => {
     if(scripts && sequences){
       return scripts.map(scr => {
-        const duration = scr.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration'))
+        let duration = scr.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration'))
+        duration = duration || 0
         return scr.set('duration', duration.toString().toHHMMSS())
       })
     }
