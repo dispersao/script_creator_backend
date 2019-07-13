@@ -27,6 +27,24 @@ const getSequenceCharacters = (sequence, parts) => {
   return chars.toSet().toList()
 }
 
+const getCategoryName = (state, props)=> props.name
+const  getCategoryListByType = createSelector(
+  getCategories,
+  getCategoryName,
+  (categories, name) => {
+    if(!categories || categories.size === 0 || !name){
+      return
+    }
+    return categories
+      .filter(cat => cat.get('type') === name)
+      .map(cat => (Map({
+        id: cat.get('id'),
+        name: cat.get('text')
+      })))
+  }
+)
+
+
 const memoizedCharacters = createSelector(
   getSequenceCharacters,
   chars => chars
@@ -64,7 +82,7 @@ const getFilteredSequences = createSelector(
         .filter((sequence) => {
 
           return filters.keySeq().toArray().every( filterName => {
-            let field;
+            let field
             switch(filterName){
               case 'characters':
                 field = memoizedCharacters(sequence, parts)
@@ -74,6 +92,12 @@ const getFilteredSequences = createSelector(
                 break
               case 'types':
                 field = [sequence.get('type')]
+                break
+              case 'arc':
+                field = sequence.get('categories').filter(c => categories.get(c.toString()).get('type') === 'arc').toSet().toList()
+                break
+              case 'pos':
+                field = sequence.get('categories').filter(c => categories.get(c.toString()).get('type') === 'pos').toSet().toList()
                 break
             }
             return field && filterField(filters.get(filterName), field)
@@ -188,5 +212,6 @@ export {
   getCurrentScriptId,
   getCurrentScriptFormatted,
   getScriptsLoading,
-  getScriptsWithDuration
-};
+  getScriptsWithDuration,
+  getCategoryListByType
+}
