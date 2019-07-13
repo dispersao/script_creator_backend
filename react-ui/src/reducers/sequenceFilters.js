@@ -20,7 +20,9 @@ const filtersDefault = {
     and: true
   },
   types: createDefaultFilter(),
-  locations: createDefaultFilter()
+  locations: createDefaultFilter(),
+  arc: createDefaultFilter(),
+  pos: createDefaultFilter()
 }
 
 const initialFilterState = fromJS(filtersDefault);

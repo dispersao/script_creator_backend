@@ -18,7 +18,7 @@ const store = async (film, app) => {
   let sequences = [];
 
 
-  /*let arcCategories = film.categories
+  let arcCategories = film.categories
     .filter(c => c.type === 'arc')
     .map(cat => {
       return {
@@ -28,14 +28,15 @@ const store = async (film, app) => {
       }
     });
 
-  let otherCategories = film.categories.filter(c => c.type !== 'arc').map(c=>({type:c.type, text: ''}));
-  otherCategories = uniqBy(otherCategories, 'type');
+  let otherCategories = film.categories.filter(c => c.type !== 'arc');
+  // let otherCategories = film.categories.filter(c => c.type !== 'arc').map(c=>({type:c.type, text: ''}));
+  // otherCategories = uniqBy(otherCategories, 'type');
 
-  entries.categories = otherCategories.concat(arcCategories).map(cat => {
+  entries.categories = arcCategories.concat(otherCategories).map(cat => {
     return app.services.categories.create(cat)
   });
 
-  let categories = await Promise.all(entries.categories);*/
+  let categories = await Promise.all(entries.categories);
 
   let sequencesData = film.sequences.map(seq => {
     let mapped = {
@@ -43,6 +44,7 @@ const store = async (film, app) => {
       locationId: locations.find(e => e.name === seq.location).id,
       typeId: types.find(e => e.name === seq.type).id,
       duration: (seq.duration || 0),
+      categories_ids: mapCategories(seq.categories, categories),
       parts: seq.parts.map(p =>({
         index: p.index,
         content: p.content,
@@ -56,19 +58,20 @@ const store = async (film, app) => {
   createSeq(sequencesData, 0, app, sequences);
 }
 
-const mapCategories = (seqCategories, categories, sequences) => {
+const mapCategories = (seqCategories, categories) => {
   return seqCategories.map(scat => {
     const mapedCat = {};
-    if(scat.type === 'arc'){
-      mapedCat.categoryId = categories.find(cat => cat.text === scat.text).id;
-    } else {
+    // if(scat.type === 'arc'){
+    return categories.find(cat => cat.text === scat.text && cat.type === scat.type).id;
+    // mapedCat.categoryId = categories.find(cat => cat.text === scat.text).id;
+    /*} else {
       mapedCat.categoryId = categories.find(cat => cat.type === scat.type).id;
       if(scat.type === 'pos'){
         mapedCat.index = scat.text;
       } else {
         mapedCat.relatedSequence = sequences.find(s => s.sceneNumber === scat.text).id;
       }
-    }
+    }*/
     return mapedCat;
   });
 }

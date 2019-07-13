@@ -13,6 +13,9 @@ const ScriptHeader = (script) => {
         <div>
           by {script.author}
         </div>
+        <div className ="light">
+          {script.duration}
+        </div>
         <Nav className="right-aligned">
           {script.edit &&
             <Link to={`/script/${script.id}`}><i className="far fa-eye"></i></Link>

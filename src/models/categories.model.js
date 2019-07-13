@@ -2,10 +2,10 @@
 // for more of what you can do here.
 const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes;
-const Character = require('./character.model');
+// const Character = require('./character.model');
 // const Sequence = require('./sequence.model');
 const CategoryCharacter = require('./categorycharacter.model');
-// const CategorySequencePosition = require('./categorysequenceposition.model');
+const CategorySequence = require('./categorysequence.model');
 
 
 
@@ -20,6 +20,8 @@ module.exports = function (app) {
       allowNull: false
     }
   }, {
+    timestamps: false
+  }, {
     hooks: {
       beforeCount(options) {
         options.raw = true;
@@ -29,15 +31,15 @@ module.exports = function (app) {
 
   // eslint-disable-next-line no-unused-vars
   Categories.associate = function (models) {
-    Categories.belongsToMany(Character(app), {
+    Categories.belongsToMany(models['characters'], {
       foreignKey: 'categoryId',
       through: CategoryCharacter(app)
     });
 
-    // Categories.belongsToMany(Sequence(app), {
-    //   foreignKey: 'categoryId',
-    //   through: CategorySequencePosition(app)
-    // });
+    Categories.belongsToMany(models['sequences'], {
+      foreignKey: 'categoryId',
+      through: CategorySequence(app)
+    });
   };
 
   return Categories;

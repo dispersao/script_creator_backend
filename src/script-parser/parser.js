@@ -6,6 +6,7 @@ const uniqBy = require('lodash/uniqBy');
 const uniq = require('lodash/uniq');
 const difference = require('lodash/difference');
 const store = require('./store');
+const sortBy = require('lodash/sortBy');
 
 
 const parseFile = async (app) => {
@@ -38,11 +39,9 @@ const processTokens = output => {
   const regExp = new RegExp('(\\-\\-)(.*)(\\-\\-)', 'gm');
 
   output.tokens.forEach(token =>{
-
     switch(token.type){
 
     case 'scene_heading':
-    console.log(token);
       sequence = {characters:[], content:'', actions:[], parts: [], categories:[]};
       type_location = token.text.split('-');
       sequence.type = type_location[0].trim();
@@ -91,7 +90,7 @@ const processTokens = output => {
       sequence.parts.push({index: sequence.parts.length, type: type , content: action});
       break;
     }
-    if(sequence && token.text != undefined && token.type !== 'scene_heading'){
+    if(sequence && token.text != undefined && token.type !== 'scene_heading' && token.type !== 'note'){
       sequence.content+= token.text + '<br />';
     }
   });
@@ -107,9 +106,9 @@ const processTokens = output => {
 const includeCharacters = (film) => {
   film.sequences.forEach(s => {
     let partsToAddChars = s.parts.filter(p => p.type === 'action');
-    const otherParts = difference(s.parts, partsToAddChars);
+    const otherParts = s.parts.filter(p => p.type !== 'action');
     partsToAddChars = addCharacters(partsToAddChars, film.characters, 'content');
-    s.parts = otherParts.concat(otherParts, partsToAddChars);
+    s.parts = sortBy(otherParts.concat(partsToAddChars), 'index');
   })
 
 

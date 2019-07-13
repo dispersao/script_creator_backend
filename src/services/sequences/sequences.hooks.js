@@ -8,7 +8,7 @@ module.exports = {
         const models = context.app.get('sequelizeClient').models;
         context.params.sequelize = {
           raw: false,
-          include: [{ model: models['locations']}, { model: models['types']}, { model: models['parts'], include: [{model: models['characters']}] }]
+          include: [{ model: models['categories'], include: [{model: models['characters']}]}, { model: models['locations']}, { model: models['types']}, { model: models['parts'], include: [{model: models['characters']}] }]
         };
         return Promise.resolve(context);
       }
@@ -25,7 +25,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [createParts],
+    create: [createParts, associateCategories],
     update: [],
     patch: [],
     remove: []
@@ -41,6 +41,15 @@ module.exports = {
     remove: []
   }
 };
+
+async function associateCategories(context){
+  if(context.data.categories_ids){
+    let promises = context.result.setCategories(context.data.categories_ids).catch(e=> console.log(e))
+
+    await Promise.all([promises])
+  }
+  return context
+}
 
 async function createParts(context){
   let promises = context.result.parts.map(p =>{

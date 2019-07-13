@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {toJS} from '../utils/immutableToJS'
-import {fetchScriptsIfNeeded} from '../actions'
-import {getScripts} from '../selectors'
+import {fetchScriptsIfNeeded, fetchSequencesifNeeded} from '../actions'
+import {getScriptsWithDuration} from '../selectors'
 import ScriptCard from './scriptCard'
 // import {Link} from 'react-router-dom'
 import {ListGroup} from 'react-bootstrap'
@@ -11,6 +11,7 @@ import {ListGroup} from 'react-bootstrap'
 class ScriptListContainer extends Component{
   componentDidMount(){
     this.props.fetchScripts()
+    this.props.fetchSequences()
   }
 
   render(){
@@ -30,12 +31,13 @@ class ScriptListContainer extends Component{
 
 const mapStateToProps = (state, ownProps) => {
   return{
-    scripts: getScripts(state)
+    scripts: getScriptsWithDuration(state)
   }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchScripts: ()=> dispatch(fetchScriptsIfNeeded())
+  fetchScripts: ()=> dispatch(fetchScriptsIfNeeded()),
+  fetchSequences: ()=> dispatch(fetchSequencesifNeeded())
 })
 
 export default connect(

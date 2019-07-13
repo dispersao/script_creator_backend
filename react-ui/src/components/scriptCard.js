@@ -5,7 +5,7 @@ import { removeScript } from '../actions'
 import {Link} from 'react-router-dom'
 
 
-const ScriptCard = ({name, sequences, id, author, last_editor, deleteScript}) => {
+const ScriptCard = ({name, sequences, id, author, last_editor, deleteScript, duration}) => {
   const [viewState, setViewState] = useState()
 
   const onCancelClick = () =>{
@@ -54,6 +54,9 @@ const ScriptCard = ({name, sequences, id, author, last_editor, deleteScript}) =>
         </div>
         <div className="ScriptCardSequenceCount">
           <span>{sequences.length} {sequences.length === 1 ? 'sequence' : 'sequences'}</span>
+        </div>
+        <div className="ScriptCardSequenceCount">
+          <span>{duration}</span>
         </div>
         <ButtonToolbar >
           <Link to={`/script/${id}`}>
