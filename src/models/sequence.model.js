@@ -7,6 +7,9 @@ const Type = require('./type.model');
 const Location = require('./location.model');
 const Part = require('./part.model');
 
+const CategorySequence = require('./categorysequence.model');
+
+
 
 module.exports = function (app) {
   const sequelizeClient = app.get('sequelizeClient');
@@ -41,6 +44,12 @@ module.exports = function (app) {
     Sequence.hasMany(Part(app), {
     });
     models['parts'].associate(models);
+
+
+    Sequence.belongsToMany(models['categories'], {
+      foreignKey: 'sequenceId',
+      through: CategorySequence(app)
+    });
   };
 
 

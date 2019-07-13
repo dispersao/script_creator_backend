@@ -1,5 +1,6 @@
 
 const fetch = require('node-fetch');
+const isEqual = require('lodash/isEqual');
 
 let oldData = fetch('http://dispersao-scripts-api.herokuapp.com/sequences', {
   method: 'GET',
@@ -26,11 +27,14 @@ let scriptsData = fetch('http://dispersao-scripts-api.herokuapp.com/scripts', {
 }).then(response => response.json()); // parses JSON response into native JavaScript objects
 
 Promise.all([oldData, newData, scriptsData]).then(([oldData, newData, scriptData]) => {
-  console.log(oldData)
+  // console.log(oldData)
 
   let mapedIds = oldData.data.map(seq => {
     let newSeq = newData.data.find(s=> s.sceneNumber === seq.sceneNumber)
     if(newSeq){
+      if(seq.id !== newSeq.id){
+        console.log(`changed: sceneNumber: ${seq.sceneNumber}, oldId: ${seq.id}, newId: ${newSeq.id}`)
+      }
       return {sceneNumber: seq.sceneNumber, oldId: seq.id, newId: newSeq.id}
     } else {
       console.log('didint find in new '+seq.sceneNumber)
@@ -38,21 +42,39 @@ Promise.all([oldData, newData, scriptsData]).then(([oldData, newData, scriptData
     }
   }).filter(Boolean)
 
-console.log(mapedIds)
+// console.log(mapedIds)
+debugger;
 
 let newScripts = scriptData.data.map(script => {
-  console.log(script)
-  let newSeqs = script.sequences.map(s => mapedIds.find(mi => mi.oldId === s).newId)
-  return {
-    id:script.id,
-    name:script.name,
-    sequences:newSeqs
-  }
+    let newSeqs = script.sequences.map(s => mapedIds.find(mi => mi.oldId === s).newId)
+
+    // console.log(`script ${script.name} old sequences: ${script.sequences}`)
+    // console.log(`script ${script.name} new sequences: ${newSeqs}`)
+    if(!isEqual(script.sequences, newSeqs)){
+      console.log(`script ${script.name} old sequences: ${script.sequences}`)
+      console.log(`script ${script.name} new sequences: ${newSeqs}`)
+    } else {
+      console.log('no changes on script '+script.name)
+    }
+
+
+    // return fetch(`http://dispersao-scripts-api.herokuapp.com/scripts/${script.id}`, {
+    //   method: 'PATCH',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJ1c2VySWQiOjExLCJpYXQiOjE1NjIyMzk2NDIsImV4cCI6MTU5Mzc5NzI0MiwiYXVkIjoiaHR0cHM6Ly9kaXNwZXJzYW8tc2NyaXB0cy5oZXJva3UuY29tIiwiaXNzIjoibWFpcmFzYWxhIiwic3ViIjoic2NyaXB0c19sb2ciLCJqdGkiOiJiYjNlNWYyZi1lYTc0LTQ4YWYtYmU4MC1hMDY5ZTRiNDlhZTMifQ.RpToXRIZR8_q41UFbgz3oyzusqDVVhGBe13VlasRE_o',
+    //   },
+    //   body: JSON.stringify({sequences:newSeqs})
+    // }).then(response => response.json());
 })
 
+Promise.all(newScripts).then((scripts) => {
+  console.log(scripts)
+}).catch(e => console.log(e))
 
 
-})
+
+}).catch(e=> console.log(e))
 //
 // let mapedIds = oldData.data.map(seq => {
 //   let newSeq = newData.data.find(s=> s.sceneNumber === seq.sceneNumber)

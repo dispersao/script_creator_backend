@@ -3,7 +3,6 @@
 const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes;
 
-const Character = require('./character.model');
 const PartCharacter = require('./partcharacter.model');
 
 module.exports = function (app) {
@@ -25,7 +24,7 @@ module.exports = function (app) {
 
   // eslint-disable-next-line no-unused-vars
   Part.associate = function (models) {
-    Part.belongsToMany(Character(app), {
+    Part.belongsToMany(models['characters'], {
       foreignKey: 'partId',
       through: PartCharacter(app)
     });
