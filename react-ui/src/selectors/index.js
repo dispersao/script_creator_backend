@@ -1,5 +1,5 @@
-import { Map } from 'immutable';
-import { createSelector } from 'reselect';
+import { Map } from 'immutable'
+import { createSelector } from 'reselect'
 
 // Select entities from state
 const getSequences = state => state.sequenceData.get('sequences')
@@ -7,6 +7,7 @@ const getParts = state => state.sequenceData.get('parts')
 const getCharacters = state => state.sequenceData.get('characters')
 const getLocations = state => state.sequenceData.get('locations')
 const getTypes = state => state.sequenceData.get('types')
+const getCategories = state => state.sequenceData.get('categories')
 
 const getScripts = state => state.scriptData.get('scripts')
 const getCurrentScriptId = (state) => state.scriptData.get('currentScript')
@@ -54,8 +55,8 @@ const getFilteredSequences = createSelector(
   getSequenceFilters,
   getScripts,
   getCurrentScriptId,
-  getScriptSequences,
-  ( sequences, parts, characters, locations, types, filters, scripts, currentScript, scriptSeqs) => {
+  getCategories,
+  ( sequences, parts, characters, locations, types, filters, scripts, currentScript, categories) => {
     if (!sequences || sequences.size === 0) return null;
     let filtered = (
       sequences
@@ -77,48 +78,49 @@ const getFilteredSequences = createSelector(
             }
             return field && filterField(filters.get(filterName), field)
           }) && !scripts
-                .getIn([currentScript.toString(), 'sequences'])
-                .some(sid => sid === sequence.get('id'))
+            .getIn([currentScript.toString(), 'sequences'])
+            .some(sid => sid === sequence.get('id'))
         })
-        .map((sequence) => mountSequence(sequence, types, locations, parts, characters))
-      )
-      return filtered.valueSeq().toList()
+        .map((sequence) => mountSequence(sequence, types, locations, parts, characters, categories))
+    )
+    return filtered.valueSeq().toList()
   }
 )
 
 // const makeGetScriptFormatted = () => {
   // return createSelector(
 const getCurrentScriptFormatted = createSelector(
-    getCurrentScriptId,
-    getScripts,
-    getScriptSequences,
-    getSequences,
-    getParts,
-    getCharacters,
-    getLocations,
-    getTypes,
-    (scriptId, scripts, scriptSequences, sequences, parts, characters, locations, types) => {
-      if(!scriptId || !scripts || !sequences || sequences.size === 0) return null
-      const script = scripts.get(scriptId.toString())
-      return Map({
-        name: script.get('name'),
-        id: script.get('id'),
-        author: script.get('author'),
-        last_editor: script.get('last_editor'),
-        synched: script.get('synched'),
-        new: script.get('new'),
-        duration: script.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration')).toString().toHHMMSS(),
-        sequences: script.get('sequences').map((seqId, index) => {
-          let seq = sequences.get(seqId.toString())
-          return mountSequence(seq, types, locations, parts, characters)
-        })
+  getCurrentScriptId,
+  getScripts,
+  getScriptSequences,
+  getSequences,
+  getParts,
+  getCharacters,
+  getLocations,
+  getTypes,
+  getCategories,
+  (scriptId, scripts, scriptSequences, sequences, parts, characters, locations, types, categories) => {
+    if(!scriptId || !scripts || !sequences || sequences.size === 0) return null
+    const script = scripts.get(scriptId.toString())
+    return Map({
+      name: script.get('name'),
+      id: script.get('id'),
+      author: script.get('author'),
+      last_editor: script.get('last_editor'),
+      synched: script.get('synched'),
+      new: script.get('new'),
+      duration: script.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration')).toString().toHHMMSS(),
+      sequences: script.get('sequences').map((seqId) => {
+        let seq = sequences.get(seqId.toString())
+        return mountSequence(seq, types, locations, parts, characters, categories)
       })
-    }
+    })
+  }
   )
 
 // }
 
-const mountSequence = (sequence, types, locations, parts, characters) => {
+const mountSequence = (sequence, types, locations, parts, characters, categories) => {
   return Map({
     id: sequence.get('id'),
     type: types.get(sequence.get('type').toString()),
@@ -126,6 +128,11 @@ const mountSequence = (sequence, types, locations, parts, characters) => {
     characters: memoizedCharacters(sequence, parts).map(charId => characters.get(charId.toString())),
     sceneNumber: sequence.get('sceneNumber'),
     duration: sequence.get('duration').toString().toHHMMSS(),
+    categories: sequence.get('categories').map(catId => {
+      let cat = categories.get(catId.toString())
+      let chars = cat.get('characters').map(charId => characters.get(charId.toString()))
+      return cat.set('characters', chars)
+    }),
     parts: sequence.get('parts').map(partId => {
       let p = parts.get(partId.toString())
       let caracters = p.get('characters').map(charId => characters.get(charId.toString()))

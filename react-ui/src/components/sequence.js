@@ -1,8 +1,9 @@
 import React from 'react'
 import SequenceCharactersList from './sequenceCharactersList'
 import PartsList from './partsList'
+import CategoriesList from './categoriesList'
 
-const Sequence = ({type, location, id, sceneNumber, characters, parts, duration}) => {
+const Sequence = ({type, location, id, sceneNumber, characters, parts, duration, categories}) => {
   let clas= "SequenceContainer";
 
   return (
@@ -16,6 +17,11 @@ const Sequence = ({type, location, id, sceneNumber, characters, parts, duration}
       <div className="partsContanier">
         <PartsList parts={parts} />
       </div>
+      {categories && categories.length > 0 &&
+        <div className="light">
+          <CategoriesList categories={categories} />
+        </div>
+      }
     </div>
   )
 }
