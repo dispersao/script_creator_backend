@@ -34,12 +34,10 @@
 .FiltersContainer {
   padding: 0 5px;
   background: #adadad;
-  /* min-height: 100%; */
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: flex-start;
   justify-content: space-between;
-  flex-direction: column;
 }
 
 .FilterContainer {
@@ -47,6 +45,7 @@
   flex: 1;
   padding: 5px;
   width: 100%;
+  min-width: 150px;
 }
 
 .FilterTitle {
@@ -107,7 +106,7 @@
   background: #efefef;
   padding: 20px;
   display: block;
-  height: 400px;
+  max-height: 400px;
   overflow: auto;
   float: left;
   width: 100%;
@@ -122,20 +121,20 @@
 }
 
 .sequencePicker {
-  flex: 1;
+  flex: 2;
   min-width: 200px;
 }
 
 .scriptContainer {
-  flex: 2;
+  flex: 3;
   min-width: 400px;
   padding: 5px;
   margin-top: -10px;
 }
 
 .scriptView {
-  max-width: 800px;
   margin: auto;
+  padding: 0 10px;
 }
 
 .Screenplay {
