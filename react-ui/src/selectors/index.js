@@ -133,7 +133,7 @@ const getCurrentScriptFormatted = createSelector(
       last_editor: script.get('last_editor'),
       synched: script.get('synched'),
       new: script.get('new'),
-      duration: script.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration')).toString().toHHMMSS(),
+      duration: (script.get('sequences').reduce((ac, s) => ac + sequences.get(s.toString()).get('duration'))||0).toString().toHHMMSS(),
       sequences: script.get('sequences').map((seqId) => {
         let seq = sequences.get(seqId.toString())
         return mountSequence(seq, types, locations, parts, characters, categories)
