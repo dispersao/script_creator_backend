@@ -96,14 +96,17 @@ export const changeScriptName = (script, name) => (dispatch, getState) => {
 
 
 export const createScript = (name) => dispatch => {
-  dispatch(requestScript())
-  return scriptsService.create({name})
-  .then(script => {
-    return dispatch(scriptCreated(script.id, normalizeScriptList([script])))
-  })
-  .then((s)=>{
-    history.push(`/script/${s.payload.id}/edit`)
-  })
+  return makeNewScript(dispatch, {name})
+}
+
+export const copyScript = (id) => (dispatch, getState) => {
+  let scriptCopied = getState().scriptData.getIn(['scripts', id.toString()])
+
+  let script = {
+    name: `${scriptCopied.get('name')} copy`,
+    sequences: scriptCopied.get('sequences').toJS()
+  }
+   return makeNewScript(dispatch, script)
 }
 
 export const removeScript = (id) => dispatch => {
@@ -112,6 +115,18 @@ export const removeScript = (id) => dispatch => {
   .then(script => {
     return dispatch(scriptRemoved(id))
   });
+}
+
+const makeNewScript = (dispatch, script) => {
+    dispatch(requestScript())
+    return scriptsService.create(script)
+    .then(script => {
+      console.log(script)
+      return dispatch(scriptCreated(script.id, normalizeScriptList([script])))
+    })
+    .then((s)=>{
+      history.push(`/script/${s.payload.id}/edit`)
+    });
 }
 
 export const createRandomScript = (script, total) => (dispatch, getState) => {

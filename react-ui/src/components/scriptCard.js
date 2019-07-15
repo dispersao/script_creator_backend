@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
 import { ButtonToolbar, Modal, Button } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import { removeScript } from '../actions'
+import { removeScript, copyScript } from '../actions'
 import {Link} from 'react-router-dom'
 
 
-const ScriptCard = ({name, sequences, id, author, last_editor, deleteScript, duration}) => {
+const ScriptCard = ({name, sequences, id, author, last_editor, deleteScript, duplicateScript, duration}) => {
   const [viewState, setViewState] = useState()
 
   const onCancelClick = () =>{
@@ -65,6 +65,7 @@ const ScriptCard = ({name, sequences, id, author, last_editor, deleteScript, dur
           <Link to={`/script/${id}/edit`}>
             <Button variant="outline-secondary"><i className="far fa-edit"></i></Button>
           </Link>
+          <Button variant="outline-secondary" onClick={()=>duplicateScript(id)}><i className="far fa-copy"></i></Button>
           <Button variant="outline-secondary" onClick={()=>setViewState('modal')}><i className="far fa-trash-alt"></i></Button>
         </ButtonToolbar>
       </div>
@@ -74,7 +75,8 @@ const ScriptCard = ({name, sequences, id, author, last_editor, deleteScript, dur
 }
 
 const mapDispatchToProps = (dispatch, props) => ({
-  deleteScript: (id)=> dispatch(removeScript(id))
+  deleteScript: (id)=> dispatch(removeScript(id)),
+  duplicateScript: (id) => dispatch(copyScript(id))
 })
 
 export default connect(
