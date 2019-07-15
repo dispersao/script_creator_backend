@@ -43,7 +43,7 @@
 .FilterContainer {
   /* padding-bottom: 15px; */
   flex: 1;
-  padding: 5px;
+  padding: 2px;
   width: 100%;
   min-width: 150px;
 }
@@ -185,4 +185,9 @@
 
 .right-aligned {
   flex-direction: row-reverse;
+}
+
+.adjusted {
+  padding: 0;
+  margin: 0;
 }

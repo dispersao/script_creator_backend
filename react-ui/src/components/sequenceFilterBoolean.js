@@ -2,7 +2,7 @@ import React from 'react'
 
 const SequenceFilterBoolean = ({filter, field, onChange}) => {
   return (
-    <label className="btn btn-default">
+    <label className="btn btn-default adjusted">
       <input
         type="checkbox"
         name={field} id={field}
