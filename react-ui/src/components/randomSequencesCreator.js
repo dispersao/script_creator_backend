@@ -34,8 +34,8 @@ const RandomSequencesCreator = ({script, createRandomSequences}) => {
           </Modal.Header>
           <Modal.Body>
             <Form.Group controlId="name">
-              <Form.Label>Total Sequences</Form.Label>
-              <Form.Control autoComplete="scriptAmount" type="number" min="0" max="82" placeholder="How many sequences do you want to create?" ref={amountEl}/>
+              <Form.Label>Total Minutes</Form.Label>
+              <Form.Control autoComplete="scriptHour" type="number" min="0" max="90" placeholder="How long should the film last?" ref={amountEl}/>
               <Form.Text className="text-muted">
             </Form.Text>
           </Form.Group>
