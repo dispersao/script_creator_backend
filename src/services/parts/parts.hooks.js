@@ -33,6 +33,5 @@ module.exports = {
 };
 
 async function createCharacterPart(context){
-  debugger
   return context
 }

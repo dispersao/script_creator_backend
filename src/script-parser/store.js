@@ -60,19 +60,9 @@ const store = async (film, app) => {
 
 const mapCategories = (seqCategories, categories) => {
   return seqCategories.map(scat => {
-    const mapedCat = {};
-    // if(scat.type === 'arc'){
-    return categories.find(cat => cat.text === scat.text && cat.type === scat.type).id;
-    // mapedCat.categoryId = categories.find(cat => cat.text === scat.text).id;
-    /*} else {
-      mapedCat.categoryId = categories.find(cat => cat.type === scat.type).id;
-      if(scat.type === 'pos'){
-        mapedCat.index = scat.text;
-      } else {
-        mapedCat.relatedSequence = sequences.find(s => s.sceneNumber === scat.text).id;
-      }
-    }*/
-    return mapedCat;
+    const category = categories.find(cat => cat.text.toString() === scat.text.toString() && cat.type === scat.type)
+
+    return category.id;
   });
 }
 
