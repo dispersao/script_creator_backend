@@ -1,6 +1,6 @@
 import orderBy from 'lodash/orderBy'
 
-const VELOCITY = 5
+const VELOCITY = 6
 const LIMIT = 1
 const MAX_SCENES_AMOUNT = 10
 const NON_ZERO_POS_ADDEND = 1

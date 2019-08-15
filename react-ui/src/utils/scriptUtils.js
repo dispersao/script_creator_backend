@@ -1,4 +1,5 @@
 import orderBy from 'lodash/orderBy'
+import intersection from 'lodash/intersection'
 import {calculateProbability} from './probabilityCalculator'
 import {integer, real, MersenneTwister19937} from 'random-js'
 
@@ -12,7 +13,7 @@ export const getRandomScriptSequences = (sequences, minutes) => {
   let sequence, sequenceId, prevSeq, availableNextSeqs, index
   let seconds = minutes * 60
 
-  // printPositions(sequences)
+  printPositions(sequences)
 
   let totalTime = 0
 
@@ -21,21 +22,22 @@ export const getRandomScriptSequences = (sequences, minutes) => {
     // index = prevSeq ? prevSeq.closestIndex : scriptSequences.length
     index = scriptSequences.length
     index++
+    sequences = prepareSequencesFilter(sequences, scriptSequences)
+    // console.log(sequences)
     availableNextSeqs = filterNextSequences(prevSeq, sequences)
+    // console.log('availableNextSeqs ' + availableNextSeqs.length)
     if(!availableNextSeqs.length){
       totalTime = seconds
+    } else {
+      availableNextSeqs = calculateProbability(index, availableNextSeqs)
+
+      sequenceId = getNextSequence(availableNextSeqs, index)
+      sequence = sequences.find(s => s.id === sequenceId.seq)
+
+      sequences.splice(sequences.indexOf(sequence), 1)
+      scriptSequences.push(sequence)
+      totalTime += sequence.duration
     }
-    // availableNextSeqs = calculateProbabilities(index, availableNextSeqs)
-    availableNextSeqs = calculateProbability(index, availableNextSeqs)
-    // let probabilities = calculateProbability(index, availableNextSeqs)
-    // console.log(probabilities)
-
-    sequenceId = getNextSequence(availableNextSeqs, index)
-    sequence = sequences.find(s => s.id === sequenceId.seq)
-
-    sequences.splice(sequences.indexOf(sequence), 1)
-    scriptSequences.push(sequence)
-    totalTime += sequence.duration
 
   }  while(totalTime < seconds)
 
@@ -45,40 +47,38 @@ export const getRandomScriptSequences = (sequences, minutes) => {
 }
 
 const filterNextSequences = (prevSeq, sequences) => {
-  if(!prevSeq) return sequences
+  // if(!prevSeq) return sequences
   return sequences.filter(el => {
-    return el.location !== prevSeq.location && (!prevSeq.characters.length || !prevSeq.characters.every(ch => el.characters.includes(ch)))
+    const locationEnabled = !prevSeq || el.location !== prevSeq.location
+    const charEnabled = !prevSeq || (!prevSeq.characters.length || !prevSeq.characters.every(ch => el.characters.includes(ch)))
+    console.log(`sceneNumber: ${el.sceneNumber} locationEnabled: ${locationEnabled} charEnabled:${charEnabled} enabled:${el.enabled}`)
+    return el.enabled && locationEnabled && charEnabled
   })
 }
 
-// const calculateProbabilities = (pos, sequences) => {
-//
-//   let procSeqs = calculatePositionDistance(pos, sequences)
-//   return procSeqs
-// }
-//
-// const calculatePositionDistance = (pos, seqs) => {
-//   return seqs.map(s => {
-//     let orderPos = s.categories
-//       .filter(cat => cat.type === 'pos')
-//       .map(cat => parseInt(cat.text))
-//       .sort((a, b) => {
-//         let adist = Math.abs(pos - a)
-//         let bdist = Math.abs(pos - b)
-//         if(adist < bdist) return -1
-//         if(adist > bdist) return 1
-//         else return 0
-//       })
-//     let dist = Math.abs(pos - orderPos[0])
-//     // console.log(`pos:${pos} seq:${s.sceneNumber} positions:[${orderPos.join(',')}] dist:${dist} prob:${1/(dist + 1)}`)
-//     return {
-//       ...s,
-//       closestIndex: orderPos[0],
-//       posDist: Math.abs(dist),
-//       posProb: 1/(dist + 1)
-//     }
-//   })
-// }
+const prepareSequencesFilter = (sequences, played) => {
+  let filteredSequences = sequences
+  let blocked = []
+  let playedIds = []
+  if(played){
+    played.forEach(s => {
+      playedIds.push(s.sceneNumber)
+      let blockedBySeq = s.categories.filter(cat => cat.type === 'blocks').map(cat => cat.text)
+      blocked = blocked.concat(blockedBySeq)
+    })
+  }
+
+  return filteredSequences.map(seq => {
+    const requires = seq.categories.filter(cat => cat.type === 'requires').map(cat => cat.text)
+    const requireDisabled = intersection(requires, playedIds).length === requires.length
+    console.log(seq, requires, requireDisabled)
+    return {
+      ...seq,
+      enabled: !blocked.includes(seq.sceneNumber) && requireDisabled
+    }
+  })
+}
+
 
 const getNextSequence = (seqs, index) => {
   let engine = MersenneTwister19937.autoSeed()
@@ -95,11 +95,10 @@ const getNextSequence = (seqs, index) => {
       high: limit + s.perc
     }
     limit += s.perc
-    // console.log(`seq:${s.seq} perc:${s.perc} range:[${s.range.low}-${s.range.high}]`)
     return s
   })
   let orderSeqs = orderBy(seqs, 'perc', 'desc')
-  console.log(orderSeqs)
+  // console.log(orderSeqs)
 
   let positions = [...new Set(seqs.map(s => s.dist))]
   positions = orderBy(positions.map(p => {
@@ -110,26 +109,22 @@ const getNextSequence = (seqs, index) => {
       amount: sf.length
     }
   }), 'range', 'desc')
-  console.log('acumulation of percentage per position', positions)
-  // debugger
-  // positions.forEach(f => console.log(`for index ${index} dist:${f.d} range:${f.range} amount:${f.am} in limit:${limit}`))
+  let selectedSeq
+  do{
+    engine = MersenneTwister19937.autoSeed()
+    distribution = real(0, limit)
+    const seed = distribution(engine)
+    // console.log('position: ' + index+ ' seed:' + seed)
+    selectedSeq = orderSeqs.find(s => s.range.low >= seed && seed <= s.range.high)
+  } while (!selectedSeq)
 
-  engine = MersenneTwister19937.autoSeed()
-  distribution = real(0, limit)
-  const seed = distribution(engine)
-  console.log('position: ' + index+ ' seed:' + seed)
-
-  const selectedSeq = orderSeqs.find(s => s.range.low >= seed && seed <= s.range.high)
-
-  console.log('selected: ', selectedSeq)
-  // let nextSeq = seqs.find(s => s.range.low >= seed && seed <= s.range.high)
-  // console.log(`seed ${seed}, seq: ${nextSeq.sceneNumber} dist:${nextSeq.posDist}`)
+  // console.log('selected: ', selectedSeq)
   return selectedSeq
 }
 
 
 const printPositions = (sequences)=>{
-  let categories = new Array(78).fill({pos: 0, seqs: [], am: 0}).map((n, i) => ({...n, pos:(i+1)}))
+  let categories = new Array(78).fill({pos: 0, am: 0}).map((n, i) => ({...n, seqs: new Array(), pos:(i+1)}))
   sequences.forEach(s => {
     let scats = s.categories.filter(c => c.type === 'pos')
     scats.forEach(scat => {
@@ -144,6 +139,7 @@ const printPositions = (sequences)=>{
 
   Object.keys(categories).forEach(key => {
     categories[key].sequences = categories[key].seqs.join(' | ')
+    delete categories[key].seqs
   })
 
   const cleanSeqs = sequences.map(s => {
