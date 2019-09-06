@@ -46,15 +46,7 @@ export const getRandomScriptSequences = (sequences, minutes) => {
   return scriptSequences.map(s => s.id)
 }
 
-const filterNextSequences = (prevSeq, sequences) => {
-  // if(!prevSeq) return sequences
-  return sequences.filter(el => {
-    const locationEnabled = !prevSeq || el.location !== prevSeq.location
-    const charEnabled = !prevSeq || (!prevSeq.characters.length || !prevSeq.characters.every(ch => el.characters.includes(ch)))
-    console.log(`sceneNumber: ${el.sceneNumber} locationEnabled: ${locationEnabled} charEnabled:${charEnabled} enabled:${el.enabled}`)
-    return el.enabled && locationEnabled && charEnabled
-  })
-}
+
 
 const prepareSequencesFilter = (sequences, played) => {
   let filteredSequences = sequences
@@ -76,6 +68,15 @@ const prepareSequencesFilter = (sequences, played) => {
       ...seq,
       enabled: !blocked.includes(seq.sceneNumber) && requireDisabled
     }
+  })
+}
+
+const filterNextSequences = (prevSeq, sequences) => {
+  return sequences.filter(el => {
+    const sameLocation = prevSeq && el.location.id === prevSeq.location.id
+    const sameChars = prevSeq && prevSeq.characters.length && prevSeq.characters.every(ch => el.characters.map(ch => ch.id).includes(ch.id))
+    console.log(`sceneNumber: ${el.sceneNumber} sameLocation: ${sameLocation} sameChars:${sameChars} enabled:${el.enabled}`)
+    return el.enabled && !(sameLocation && sameChars)
   })
 }
 
