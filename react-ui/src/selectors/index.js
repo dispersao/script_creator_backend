@@ -162,7 +162,7 @@ const mountSequence = (sequence, types, locations, parts, characters, categories
       let p = parts.get(partId.toString())
       let caracters = p.get('characters').map(charId => characters.get(charId.toString()))
       return p.set('characters', caracters)
-    })
+    }).sortBy(part => part.get('index'))
   })
 }
 
