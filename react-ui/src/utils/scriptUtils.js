@@ -82,6 +82,9 @@ const filterNextSequences = (prevSeq, sequences) => {
 
 
 const getNextSequence = (seqs, index) => {
+  if(seqs.length === 1){
+    return seqs[0]
+  }
   let engine = MersenneTwister19937.autoSeed()
   let distribution = integer(0, 1)
   seqs = seqs.sort(()=>{
