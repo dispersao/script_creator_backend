@@ -10,6 +10,8 @@ const SequenceFilters = (props)=>{
       <SequenceFilter name='locations' key={3}></SequenceFilter>
       <SequenceCategoryFilter name='arc' key={4}></SequenceCategoryFilter>
       <SequenceCategoryFilter name='pos' key={5}></SequenceCategoryFilter>
+      <SequenceCategoryFilter name='blocks-next' key={6}></SequenceCategoryFilter>
+      <SequenceCategoryFilter name='blocks-2nd-next' key={7}></SequenceCategoryFilter>
     </section>
   )
 }

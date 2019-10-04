@@ -22,16 +22,17 @@ const filtersDefault = {
   types: createDefaultFilter(),
   locations: createDefaultFilter(),
   arc: createDefaultFilter(),
-  pos: createDefaultFilter()
+  pos: createDefaultFilter(),
+  "blocks-next": createDefaultFilter(),
+  "blocks-2nd-next": createDefaultFilter(),
 }
 
-const initialFilterState = fromJS(filtersDefault);
+const initialFilterState = fromJS(filtersDefault)
 
 const reducer = (state = initialFilterState, action) => {
   switch(action.type){
     case SET_FILTER_IDS:
-      const idsList = List(action.payload.value)
-      return state.setIn([action.payload.name, action.payload.field], idsList)
+      return state.setIn([action.payload.name, action.payload.field], List(action.payload.value))
     case SET_FILTER_EXCLUDE:
     case SET_FILTER_AND:
       return state.mergeDeep({

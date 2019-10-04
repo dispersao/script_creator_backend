@@ -14,7 +14,7 @@ const getCurrentScriptId = (state) => state.scriptData.get('currentScript')
 const getScriptSequences = state => state.scriptData.get('scriptSequences')
 
 // Select filter from state
-const getSequenceFilters = state => state.sequenceFilters;
+const getSequenceFilters = state => state.sequenceFilters
 const getEntryListByname = (state, name) => state.sequenceData.get(name)
 const getSequenceFilterByName = (state, name) => state.sequenceFilters.get(name)
 
@@ -98,6 +98,12 @@ const getFilteredSequences = createSelector(
                 break
               case 'pos':
                 field = sequence.get('categories').filter(c => categories.get(c.toString()).get('type') === 'pos').toSet().toList()
+                break
+              case 'blocks-next':
+                field = sequence.get('categories').filter(c => categories.get(c.toString()).get('type') === 'blocks-next').toSet().toList()
+                break
+              case 'blocks-2nd-next':
+                field = sequence.get('categories').filter(c => categories.get(c.toString()).get('type') === 'blocks-2nd-next').toSet().toList()
                 break
             }
             return field && filterField(filters.get(filterName), field)
